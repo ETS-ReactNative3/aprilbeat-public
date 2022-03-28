@@ -10,7 +10,7 @@
 
 **Aprilbeat** is an new open-source, online, fully web-based rhythm game. It plays songs in
 APB format (See:
-[Introduction to APB](https://boneapriltea.vercel.app/aprilbeat/apb)).
+[Introduction to APB](https://boneaprilteadocs.vercel.app/apb)).
 
 It is recommended to play this game on Google Chrome.
 
@@ -21,8 +21,7 @@ It is recommended to play this game on Google Chrome.
 - [Video Demo](#video-demo)
 - [Quick Tour](#quick-tour)
 - [Technology](#technology)
-- [Development](#development)
-- [Sub-projects](#sub-projects)
+- [Running Aprilbeat Locally](#running-aprilbeat-locally)
 - [License](#license)
 
 <!-- tocstop -->
