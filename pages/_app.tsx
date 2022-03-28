@@ -2,11 +2,7 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { motion, useAnimation } from 'framer-motion'
-import { useEffect, useState } from 'react'
-
-import { httpBatchLink } from '@trpc/client/links/httpBatchLink';
-import { loggerLink } from '@trpc/client/links/loggerLink';
-import { withTRPC } from '@trpc/next';
+import { useState } from 'react'
 
 function MyApp({ Component, pageProps }: AppProps) {
 

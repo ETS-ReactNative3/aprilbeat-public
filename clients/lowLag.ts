@@ -53,7 +53,7 @@ export async function loadAudio(id, { src }): Promise<boolean> {
   });
 }
 
-interface audioData {
+interface AudioData {
   id: string;
   source: AudioBufferSourceNode;
   audioContext: AudioContext;
@@ -65,7 +65,7 @@ interface audioData {
 }
 
 const currentlyplayingaudios: any = [];
-export function playAudio(id): audioData | null {
+export function playAudio(id): AudioData | null {
   const lowLag = windowobject.lowLag;
   if (!audioincache[id]) {
     console.log(`Audio not found in cache: ${id}`);

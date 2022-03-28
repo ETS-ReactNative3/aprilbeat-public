@@ -1,6 +1,6 @@
 import { supabase } from "@/clients/supabasePublic"
 import { useEffect, useState } from "react"
-import Dialog from "@/components/Dialog"
+import Dialog from "@/components/DialogComponent"
 import { useRouter } from "next/router"
 import { apifetch } from "@/clients/apiPublic"
 

@@ -14,10 +14,6 @@ export default function Topbar({ animationControl }:Topbar) {
     const router = useRouter()
     const user = supabase.auth.user()
 
-    function openAccountDialog() {
-
-    }
-
     return (
         <motion.div
         initial={{ translateY: animationControl ? -40 : 0 }}
@@ -48,7 +44,7 @@ export default function Topbar({ animationControl }:Topbar) {
                                 },
                                 customClasses: '',
                                 callback: () => {
-                                    
+                                    return null
                                 }
                             },
                             {
@@ -64,6 +60,7 @@ export default function Topbar({ animationControl }:Topbar) {
                                 customClasses: 'ml-3',
                                 callback: () => {
                                     router.push('/game', '/game')
+                                    return null
                                 },
                             },
                         ]
@@ -123,7 +120,7 @@ export default function Topbar({ animationControl }:Topbar) {
                                 },
                                 customClasses: '',
                                 callback: () => {
-                                    
+                                    return null
                                 },
                             }
                         ]

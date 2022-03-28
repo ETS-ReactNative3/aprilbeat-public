@@ -1,7 +1,6 @@
 import { serveraddress } from "@/constants/development";
 import { supabase } from "@/clients/supabasePublic";
 import querystring from "querystring";
-import { SupabaseAuthClient } from "@supabase/supabase-js/dist/main/lib/SupabaseAuthClient";
 import { User } from "@supabase/supabase-js";
 import { logIt } from ".";
 
@@ -12,141 +11,110 @@ export async function apifetch(
   return new Promise(async (resolve, reject) => {
     const authModule = supabase.auth;
 
-    let authTokenFetch: any;
-    let currentUserFetch: any;
+    var authTokenFetch = "";
     if (authenticated) {
-      currentUserFetch = authModule.user();
       const authSession = authModule.session();
-      if (authSession) {
-        authTokenFetch = authSession.access_token;
-      }
+      if (authSession) authTokenFetch = authSession.access_token;
     }
 
     let finalparams = "";
-    if (Object.keys(params).length != 0) {
+    if (Object.keys(params).length != 0)
       finalparams = querystring.stringify(params);
-    }
 
     let finaloptions: any = {
       method: method.toUpperCase(),
     };
-    if (Object.keys(body).length != 0) {
+    if (Object.keys(body).length != 0)
       finaloptions["body"] = JSON.stringify(body);
-    }
 
-    if (true) {
-      const starttime = Date.now();
-      logIt(`API Starting to fetch "${path}"`, {
-        level: "info",
-        source: "api_handler",
-        raw: {
-          path: path,
-          params: params,
-          options: finaloptions,
-        },
-      });
-      // ga.event({
-      //   action: "api_call",
-      //   params: {
-      //     path: path,
-      //     params: params,
-      //     options: finaloptions,
-      //   },
-      // });
-      // NProgress.start();
+    // Start fetching
+    const starttime = Date.now();
+    logIt(`API Starting to fetch "${path}"`, {
+      level: "info",
+      source: "api_handler",
+      raw: {
+        path: path,
+        params: params,
+        options: finaloptions,
+      },
+    });
 
-      await fetch(
-        `${serveraddress}/api${path}?accessToken=${authTokenFetch || 0}${
-          finalparams ? `&${finalparams}` : ""
-        }`,
-        finaloptions
-      )
-        .then(async (response) => {
-          let finalresponse;
+    await fetch(
+      `${serveraddress}/api${path}?accessToken=${authTokenFetch}${
+        finalparams ? `&${finalparams}` : ""
+      }`,
+      finaloptions
+    )
+      .then(async (response) => {
+        let finalresponse;
 
-          logIt(`API Queued to be processed for "${path}"`, {
-            level: "info",
-            source: "api_handler",
-            raw: {
-              rawresponse: response,
-              path: path,
-              params: params,
-              options: finaloptions,
-            },
-          });
+        logIt(`API Queued to be processed for "${path}"`, {
+          level: "info",
+          source: "api_handler",
+          raw: {
+            rawresponse: response,
+            path: path,
+            params: params,
+            options: finaloptions,
+          },
+        });
 
-          if (json) finalresponse = await response.json();
-          if (finalresponse?.success == false) {
-            logIt(
-              `API Endpoint Failure for "${path}": ${
-                finalresponse?.reason || "Unknown Error"
-              }`,
-              {
-                level: "error",
-                source: "api_handler",
-                raw: { finalresponse },
-              }
-            );
-            // ga.event({
-            //   action: "api_call-failure",
-            //   params: {
-            //     path: path,
-            //     params: JSON.stringify(params),
-            //     options: JSON.stringify(finaloptions),
-            //     response: JSON.stringify(finalresponse),
-            //   },
-            // });
-            // NProgress.done(true);
-            return reject(finalresponse);
-          }
+        if (json) finalresponse = await response.json();
+        if (!finalresponse?.success) {
           logIt(
-            `API Endpoint Success for "${path}": ${
-              finalresponse?.code || "Unknown Success Code"
-            } - Took ${Date.now() - starttime}ms`,
+            `API Endpoint Failure for "${path}": ${
+              finalresponse?.reason || "Unknown Error"
+            }`,
             {
-              level: "success",
+              level: "error",
               source: "api_handler",
               raw: { finalresponse },
             }
           );
-          // ga.event({
-          //   action: "api_call-done",
-          //   params: {
-          //     path: path,
-          //     params: JSON.stringify(params),
-          //     options: JSON.stringify(finaloptions),
-          //     response: JSON.stringify(finalresponse),
-          //     timetofetch: `${Date.now() - starttime}ms`,
-          //   },
-          // });
-          // NProgress.done(true);
-          resolve(finalresponse?.data);
-        })
-        .catch((err) => {
-          console.log(err);
-          logIt(
-            `API Endpoint Failure for "${path}": ${err || "Unknown Error"}`,
-            {
-              level: "error",
-              source: "api_handler",
-              raw: {
-                path: path,
-                error: err,
-              },
-            }
-          );
-          // ga.event({
-          //   action: "api_call-failure_generic",
-          //   params: {
-          //     path: path,
-          //     error: err,
-          //   },
-          // });
-          reject(err);
+          return reject(finalresponse);
+        }
+        logIt(
+          `API Endpoint Success for "${path}": ${
+            finalresponse?.code || "Unknown Success Code"
+          } - Took ${Date.now() - starttime}ms`,
+          {
+            level: "success",
+            source: "api_handler",
+            raw: { finalresponse },
+          }
+        );
+        // ga.event({
+        //   action: "api_call-done",
+        //   params: {
+        //     path: path,
+        //     params: JSON.stringify(params),
+        //     options: JSON.stringify(finaloptions),
+        //     response: JSON.stringify(finalresponse),
+        //     timetofetch: `${Date.now() - starttime}ms`,
+        //   },
+        // });
+        // NProgress.done(true);
+        resolve(finalresponse?.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        logIt(`API Endpoint Failure for "${path}": ${err || "Unknown Error"}`, {
+          level: "error",
+          source: "api_handler",
+          raw: {
+            path: path,
+            error: err,
+          },
         });
-    } else {
-      reject("User not signed in");
-    }
+        // ga.event({
+        //   action: "api_call-failure_generic",
+        //   params: {
+        //     path: path,
+        //     error: err,
+        //   },
+        // });
+        reject(err);
+      });
   });
 }
 
@@ -161,14 +129,14 @@ export async function checkIfAuth(): Promise<any> {
   }
 }
 
-interface fetchedData {
+interface FetchedData {
   currentUserData: object;
   petData: object[];
   currentUser: object;
   authSession: object;
 }
 let pageProps: any = {};
-export async function fetchAllData(): Promise<fetchedData> {
+export async function fetchAllData(): Promise<FetchedData> {
   return new Promise(async (resolve, reject): Promise<any> => {
     try {
       const authModule = supabase.auth;
@@ -176,10 +144,6 @@ export async function fetchAllData(): Promise<fetchedData> {
       const authSession = authModule.session();
       pageProps.currentUser = currentUser;
       pageProps.authSession = authSession;
-      let authToken: string;
-      if (authSession) {
-        authToken = authSession.access_token;
-      }
 
       pageProps.currentUserData = await apifetch(
         `/user/${currentUser?.id ? currentUser.id : "0"}`,
