@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiResponse } from "next";
 import { serverVersion } from "@/constants/development";
 
 export function rejectHandler(
@@ -22,7 +22,7 @@ export function rejectHandler(
   return true;
 }
 
-interface resolvation {
+interface Resolvation {
   status?: number;
   code?: string;
   data: Object | any;
@@ -30,7 +30,7 @@ interface resolvation {
 
 export function resolveHandler(
   res: NextApiResponse,
-  { status = 200, code = "resolved/unknown", data = {} }: resolvation
+  { status = 200, code = "resolved/unknown", data = {} }: Resolvation
 ) {
   const finalobj = {
     success: true,

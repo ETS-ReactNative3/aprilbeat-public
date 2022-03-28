@@ -1,5 +1,5 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState, useRef } from 'react'
+import { Fragment } from 'react'
 
 interface DialogComponent {
   title?: string;
@@ -14,16 +14,15 @@ interface DialogComponent {
   children?: any;
 }
 
-export default function DialogComponent({ title, description, state, stateSetter, buttonDisabled = false, dismissable = true, buttonText = 'Got It, thanks!', callback = () => null, raw = false, children }:DialogComponent) {
+export default function DialogComp({ title, description, state, stateSetter, buttonDisabled = false, dismissable = true, buttonText = 'Got It, thanks!', callback = () => null, raw = false, children }:DialogComponent) {
 
     const dialogIsOpen = state
     const setDialogIsOpen = stateSetter
 
     function dismissDialog() {
       console.log('dismiss')
-      if (dismissable == false) {
-        return
-      }
+      if (!dismissable) return
+      
         if (callback) {
           callback()
           setDialogIsOpen(false)

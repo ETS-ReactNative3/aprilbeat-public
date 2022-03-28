@@ -3,14 +3,14 @@
 <h2 align="center">open-source web-based online rhythm game</h2>
 
 <p align="center">
-  <a href="https://twitter.com/bemusegame"><img src="https://img.shields.io/badge/twitter-@boneapriltea-blue.svg" alt="twitter" /></a>
+  <a href="https://twitter.com/boneapriltea"><img src="https://img.shields.io/badge/twitter-@boneapriltea-blue.svg" alt="twitter" /></a>
   <br>
-  <a href="https://bemuse.ninja/project"><img src="https://img.shields.io/badge/read%20the-docs-brightgreen.svg?style=flat" alt="Docs"></a>
+  <a href="https://aprilbeatdocs.vercel.app"><img src="https://img.shields.io/badge/read%20the-docs-brightgreen.svg?style=flat" alt="Docs"></a>
 </p>
 
 **Aprilbeat** is an new open-source, online, fully web-based rhythm game. It plays songs in
 APB format (See:
-[Introduction to APB](https://boneapriltea.vercel.app/aprilbeat/apb)).
+[Introduction to APB](https://boneaprilteadocs.vercel.app/apb)).
 
 It is recommended to play this game on Google Chrome.
 
@@ -21,8 +21,7 @@ It is recommended to play this game on Google Chrome.
 - [Video Demo](#video-demo)
 - [Quick Tour](#quick-tour)
 - [Technology](#technology)
-- [Development](#development)
-- [Sub-projects](#sub-projects)
+- [Running Aprilbeat Locally](#running-aprilbeat-locally)
 - [License](#license)
 
 <!-- tocstop -->
