@@ -1,10 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { rejectHandler, resolveHandler } from "@/clients/api";
-import { checkUserToken } from "@/clients/apiPublic";
 import { prismaClient } from "@/clients/prisma";
 import { supabase } from "@/clients/supabase";
 import { serveraddress } from "@/constants/development";
-import { User } from "@supabase/supabase-js";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -45,14 +43,13 @@ export default async function handler(
       password: password,
     },
     {
-      redirectTo: `${serveraddress}/dashboard`,
+      redirectTo: `${serveraddress}/auth/action?from=apisignup`,
     }
   );
 
   const userdata = await prismaClient.users.create({
     data: {
       userid: newuser?.user?.id,
-      plan: "lite",
       username: username,
     },
   });

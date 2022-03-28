@@ -83,7 +83,7 @@ export function playAudio(id): AudioData | null {
     source: "audioEngine_playAudio",
     raw: { id, audiocache: audioincache },
   });
-  const { source, audioContext, gainNode }: audioData = lowLag.play(id);
+  const { source, audioContext, gainNode }: AudioData = lowLag.play(id);
   logIt(`Playing audio with id "${id}"`, {
     source: "audioEngine_playAudio",
     raw: { id, audiocache: audioincache },
@@ -99,7 +99,7 @@ export function playAudio(id): AudioData | null {
     raw: { smoothfade_options: smoptions },
   });
 
-  const data: audioData = {
+  const data: AudioData = {
     id: id,
     source,
     audioContext,
@@ -122,7 +122,7 @@ export function getContext(): AudioContext {
   return lowLag.audioContext;
 }
 
-export function getAudio(id): audioData | null {
+export function getAudio(id): AudioData | null {
   const selectedinarray = currentlyplayingaudios.find(
     (audio) => audio.id == id
   );
