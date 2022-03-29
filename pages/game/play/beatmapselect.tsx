@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import { AppDataProps } from "@/constants/customTypings/app";
 
 export default function BeatmapSelect({ dataProps }: {dataProps:AppDataProps}) {
 
