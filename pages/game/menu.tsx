@@ -3,8 +3,9 @@ import { AppDataProps } from "@/constants/customTypings/app";
 import { motion, useAnimation } from "framer-motion";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { supabase } from '@/clients/supabasePublic'
 
-export default function Menu({ dataProps }: { dataProps:AppDataProps }) {
+export default function Menu({ dataProps }) {
     const topBarAnimationControl = useAnimation();
     const mainMenuAnimationControl = useAnimation();
     const { state: inTransition, stateSetter: setInTransition } =
@@ -19,6 +20,7 @@ export default function Menu({ dataProps }: { dataProps:AppDataProps }) {
         mainMenuAnimationControl.start({
             opacity: 1,
         });
+
     }, []);
 
     useEffect(() => {

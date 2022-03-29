@@ -11,7 +11,7 @@
 
 **Aprilbeat** is an new open-source, online, fully web-based rhythm game. It plays songs in
 APB format (See:
-[Introduction to APB](https://boneaprilteadocs.vercel.app/apb)).
+[Introduction to APB](https://aprilbeatdocs.vercel.app/apb)).
 
 It is recommended to play this game on Google Chrome.
 
@@ -92,6 +92,15 @@ cd aprilbeat
 
 # Install the dependencies
 npm i
+
+# Setup all needed keys in .env (replace [])
+DATABASE_URL="[your_supabase_database-url]"
+NEXT_PUBLIC_SUPABASE_URL=[your_supabase-url]
+NEXT_PUBLIC_SUPABASE_ANON_KEY=[your_supabase_anon-key]
+SUPABASE_PRIVATE_SERVICE_KEY=[your_supabase_private_service-key]
+
+# Initialize Database
+npx prisma push
 
 # Start development server
 npm run dev
