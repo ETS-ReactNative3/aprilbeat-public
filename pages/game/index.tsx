@@ -15,7 +15,6 @@ export default function GameIndex({ dataProps }: {dataProps:AppDataProps}) {
     const mainMenuAnimationControl = useAnimation()
     const sideBeatIndicatorAnimationControl = useAnimation()
     const topBarAnimationControl = useAnimation()
-    const [welcomeMusicPlaying, setWelcomeMusicPlaying] = useState(false)
 
     const [currentScreen, setCurrentScreen] = useState('')
     const [welcomeText, setWelcomeText] = useState('')

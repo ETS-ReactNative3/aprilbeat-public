@@ -2,6 +2,7 @@
 import '../styles/globals.css'
 import { motion, useAnimation } from 'framer-motion'
 import { useState } from 'react'
+import Head from 'next/head'
 
 function MyApp({ Component, pageProps }) {
 
@@ -47,6 +48,11 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <div>
+      <Head>
+        <title>Aprilbeat</title>
+        <meta name="title" content="Aprilbeat" />
+        <meta name="description" content="rythm game shouldn't be limited. Now publicly available, running fully on web." />
+      </Head>
       <div>
         <script src="/libs/lowLag.js" />
         <script src="/libs/soundmanager2-jsmin.js" />
