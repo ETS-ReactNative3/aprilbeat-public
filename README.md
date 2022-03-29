@@ -3,9 +3,10 @@
 <h2 align="center">open-source web-based online rhythm game</h2>
 
 <p align="center">
-  <a href="https://twitter.com/boneapriltea"><img src="https://img.shields.io/badge/twitter-@boneapriltea-blue.svg" alt="twitter" /></a>
+  <a href="https://twitter.com/boneapriltea"><img src="https://img.shields.io/badge/twitter-@boneapriltea-blue.svg" alt="Twitter" /></a>
   <br>
   <a href="https://aprilbeatdocs.vercel.app"><img src="https://img.shields.io/badge/read%20the-docs-brightgreen.svg?style=flat" alt="Docs"></a>
+  <a href="https://www.codefactor.io/repository/github/boneapriltea/aprilbeat-public"><img src="https://www.codefactor.io/repository/github/boneapriltea/aprilbeat-public/badge" alt="Codefactor"></a>
 </p>
 
 **Aprilbeat** is an new open-source, online, fully web-based rhythm game. It plays songs in
