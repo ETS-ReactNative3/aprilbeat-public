@@ -4,7 +4,7 @@ import { motion, useAnimation } from "framer-motion";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-export default function Menu({ dataProps }) {
+export default function Menu({ dataProps }: { dataProps:AppDataProps }) {
     const topBarAnimationControl = useAnimation();
     const mainMenuAnimationControl = useAnimation();
     const { state: inTransition, stateSetter: setInTransition } =

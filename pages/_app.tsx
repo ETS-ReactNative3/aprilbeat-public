@@ -39,9 +39,9 @@ function MyApp({ Component, pageProps }) {
       },
     },
 
-    inTransition: [inTransition, setInTransition],
-    audioLoaded: [audioLoaded, setAudioLoaded],
-    session: [session, setSession],
+    inTransition: { state: inTransition, stateSetter: setInTransition },
+    audioLoaded: { state: audioLoaded, stateSetter: setAudioLoaded },
+    session: { state: session, stateSetter: setSession },
     user: { state: user, stateSetter: setUser }
   }
 
