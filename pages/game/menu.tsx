@@ -3,6 +3,7 @@ import { AppDataProps } from "@/constants/customTypings/app";
 import { motion, useAnimation } from "framer-motion";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { supabase } from '@/clients/supabasePublic'
 
 export default function Menu({ dataProps }) {
     const topBarAnimationControl = useAnimation();
@@ -19,6 +20,7 @@ export default function Menu({ dataProps }) {
         mainMenuAnimationControl.start({
             opacity: 1,
         });
+
     }, []);
 
     useEffect(() => {
