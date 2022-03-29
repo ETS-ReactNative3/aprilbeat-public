@@ -4,11 +4,13 @@ import type { AppProps } from 'next/app'
 import { motion, useAnimation } from 'framer-motion'
 import { useState } from 'react'
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }) {
 
   const pageTransitionAnimationControl = useAnimation()
   const [inTransition, setInTransition] = useState(false)
   const [audioLoaded, setAudioLoaded] = useState(false)
+  const [session, setSession] = useState()
+  const [user, setUser] = useState()
 
   const dataProps = {
     pageTransitionAnimationControl: {
@@ -39,7 +41,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     },
 
     inTransition: [inTransition, setInTransition],
-    audioLoaded: [audioLoaded, setAudioLoaded]
+    audioLoaded: [audioLoaded, setAudioLoaded],
+    session: [session, setSession],
+    user: { state: user, stateSetter: setUser }
   }
 
   return (

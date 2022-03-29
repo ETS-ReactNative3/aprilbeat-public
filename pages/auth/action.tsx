@@ -25,17 +25,18 @@ export default function SignupVerify(props) {
 
         const accesstoken = parsedHash.get('access_token')
         console.log(accesstoken, parsedHash)
-        if (accesstoken) auth.setAuth(accesstoken)
-        const user = auth.user()
-        if (user) {
-            setSignedUpMessage('All done! Successfully signed in and will redirect you back soon. 🔮')
+        auth.onAuthStateChange((event, session) => {
+            if (session?.user) {
+                setSignedUpMessage('All done! Successfully signed in and will redirect you back soon. 🔮')
 
-            setTimeout(() => {
-                router.replace('/game')
-            }, 4500)
-        } else {
-            setSignedUpMessage('Whoops, seems like something went wrong and we were unable to finish the registration. Please try again in a few moments. 😭')
-        }
+                setTimeout(() => {
+                    router.replace('/game')
+                }, 4500)
+            } else {
+                setSignedUpMessage('Whoops, seems like something went wrong and we were unable to finish the registration. Please try again in a few moments. 😭')
+            }
+        })
+        if (accesstoken) auth.setAuth(accesstoken)
     }, [])
 
     return (

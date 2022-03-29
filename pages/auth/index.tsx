@@ -21,12 +21,12 @@ export default function AuthIndex(props) {
         const auth = supabase.auth
 
         if (auth.user() && router.isReady) {
-            router.replace('/learn/overview')
+            router.replace('/game')
         }
 
         auth.onAuthStateChange(() => {
             if (auth.user() && router.isReady) {
-                router.replace('/learn/overview')
+                router.replace('/game')
             }
         })
     }, [router.isReady])
@@ -60,7 +60,7 @@ export default function AuthIndex(props) {
             setIsDialogShown(true)
             return
         }
-        router.replace('/learn/overview')
+        router.push('/game')
     }
 
     async function signUpWithEmail() {
@@ -91,11 +91,11 @@ export default function AuthIndex(props) {
         })
         .catch((error) => {
             setDialogTitle('Unable to Sign Up')
-            setDialogDescription(`${error.reason} - Dialog will close in 10 seconds`)
+            setDialogDescription(`${error.reason} - Dialog will close in 5 seconds.`)
 
             setTimeout(() => {
                 router.reload()
-            }, 8000)
+            }, 5000)
         })
 
         setIsDialogShown(false)

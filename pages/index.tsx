@@ -1,14 +1,14 @@
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
-export default function AprilbeatIndex() {
+export default function AprilbeatIndex(props) {
 
     const router = useRouter()
 
     useEffect(() => {
         setTimeout(() => {
             router.replace('/game/preflight')
-        }, 2000)
+        }, 500)
     }, [])
 
     return (
