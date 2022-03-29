@@ -1,18 +1,21 @@
 /* eslint-disable @next/next/no-sync-scripts */
 import '../styles/globals.css'
 import { motion, useAnimation } from 'framer-motion'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { supabase } from '@/clients/supabasePublic'
 import Head from 'next/head'
+import { AppDataProps } from '@/constants/customTypings/app'
+import type { AuthSession, AuthUser } from '@supabase/supabase-js'
 
 function MyApp({ Component, pageProps }) {
 
   const pageTransitionAnimationControl = useAnimation()
   const [inTransition, setInTransition] = useState(false)
   const [audioLoaded, setAudioLoaded] = useState(false)
-  const [session, setSession] = useState()
-  const [user, setUser] = useState()
+  const [session, setSession] = useState<AuthSession>()
+  const [user, setUser] = useState <AuthUser>()
 
-  const dataProps = {
+  const dataProps: AppDataProps = {
     pageTransitionAnimationControl: {
       mount: async() => {
         return new Promise((resolve, reject) => {
@@ -42,9 +45,28 @@ function MyApp({ Component, pageProps }) {
 
     inTransition: { state: inTransition, stateSetter: setInTransition },
     audioLoaded: { state: audioLoaded, stateSetter: setAudioLoaded },
-    session: { state: session, stateSetter: setSession },
     user: { state: user, stateSetter: setUser }
   }
+
+  useEffect(() => {
+    const user = supabase.auth.user()
+    const session = supabase.auth.session()
+    keepUser(user, session)
+    
+
+    supabase.auth.onAuthStateChange((event, session) => {
+      keepUser(session?.user, session)
+    })
+
+    function keepUser(user, session) {
+      if (user) {
+        setUser(user)
+      } else {
+        setUser(undefined)
+      }
+    }
+  }, [])
+  
 
   return (
     <div>
