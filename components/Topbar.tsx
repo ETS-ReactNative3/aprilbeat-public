@@ -6,7 +6,7 @@ import type { AuthUser } from '@supabase/supabase-js'
 
 interface Topbar {
     animationControl?: any
-    userData: AuthUser;
+    userData: AuthUser | undefined;
 }
 
 export default function TopbarComponent({ animationControl, userData }:Topbar) {

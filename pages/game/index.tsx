@@ -4,7 +4,7 @@ import { AppDataProps } from "@/constants/customTypings/app";
 import * as lowLag from '@/clients/lowLag'
 import { useRouter } from "next/router"
 
-export default function GameIndex({ dataProps }: {dataProps:AppDataProps}) {
+export default function GameIndex({ dataProps }) {
 
     const router = useRouter()
 
@@ -15,7 +15,6 @@ export default function GameIndex({ dataProps }: {dataProps:AppDataProps}) {
     const mainMenuAnimationControl = useAnimation()
     const sideBeatIndicatorAnimationControl = useAnimation()
     const topBarAnimationControl = useAnimation()
-    const [welcomeMusicPlaying, setWelcomeMusicPlaying] = useState(false)
 
     const [currentScreen, setCurrentScreen] = useState('')
     const [welcomeText, setWelcomeText] = useState('')
@@ -224,8 +223,8 @@ export default function GameIndex({ dataProps }: {dataProps:AppDataProps}) {
                 <h1 className={`px-3 py-2 text-white`}>loading aprilbeat...</h1>
             </div>
 
-             <div className={`w-full ${isLoaded == false || ((splashStarted || inTransition) == true) ? 'hidden' : ''} absolute z-10 h-full min-h-screen flex justify-center items-center`}>
-                <button className={`bg-white px-3 py-2 text-black rounded-md`} onClick={() => startWelcomeScreen()}>Start Game</button>
+            <div className={`w-full ${isLoaded == false || ((splashStarted || inTransition) == true) ? 'hidden' : ''} absolute z-10 h-full min-h-screen bg-gray-900 flex justify-center items-center`}>
+                <button className={`from-[#ff9482] to-[#7d77ff] bg-gradient-to-br px-5 py-2 text-white shadow-md shadow-gray-600 hover:animate-pulse rounded-full`} onClick={() => startWelcomeScreen()}>Start Game</button>
             </div>
 
             <motion.div

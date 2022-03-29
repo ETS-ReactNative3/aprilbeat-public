@@ -14,11 +14,7 @@ export interface AppDataProps {
     stateSetter: Function;
   };
   user: {
-    state: AuthUser;
-    stateSetter: Function;
-  };
-  session: {
-    state: AuthSession;
+    state: AuthUser | undefined;
     stateSetter: Function;
   };
 }
