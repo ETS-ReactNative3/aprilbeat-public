@@ -2,17 +2,18 @@ import { useState } from 'react'
 import { CogOutline, HomeOutline, NotificationsOutline, PeopleOutline } from 'react-ionicons'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
-import { supabase } from '@/clients/supabasePublic'
+import type { AuthUser } from '@supabase/supabase-js'
 
 interface Topbar {
     animationControl?: any
+    userData: AuthUser;
 }
 
-export default function Topbar({ animationControl }:Topbar) {
+export default function TopbarComponent({ animationControl, userData }:Topbar) {
 
     const [hoveringInButton, setHoveringInButton] = useState(false)
     const router = useRouter()
-    const user = supabase.auth.user()
+    let user = userData
 
     return (
         <motion.div

@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react"
 import { motion, useAnimation } from 'framer-motion'
+import { AppDataProps } from "@/constants/customTypings/app";
 import * as lowLag from '@/clients/lowLag'
 import { useRouter } from "next/router"
-import Topbar from '@/components/Topbar'
-import anime from 'animejs/lib/anime.es.js';
 
 export default function GameIndex({ dataProps }: {dataProps:AppDataProps}) {
 
@@ -26,8 +25,9 @@ export default function GameIndex({ dataProps }: {dataProps:AppDataProps}) {
     const [mainMenuVisible, setMainMenuVisible] = useState(false)
     const [isLoaded, setIsLoaded] = useState(false)
     const [currentFinalFps, setCurrentFinalFps] = useState('0')
-    const [inTransition, setInTransition] = dataProps.inTransition
-    const [audioLoaded, setAudioLoaded] = dataProps.audioLoaded
+    const { state: inTransition, stateSetter: setInTransition } =
+        dataProps.inTransition;
+    const { state: audioLoaded, stateSetter: setAudioLoaded } = dataProps.audioLoaded
 
     async function enterBeatmapMenu() {
         await dataProps.pageTransitionAnimationControl.mount()
