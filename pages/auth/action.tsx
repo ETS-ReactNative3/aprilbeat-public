@@ -5,14 +5,13 @@ import { useRouter } from "next/router"
 export default function SignupVerify(props) {
 
     const router = useRouter()
-    const [signedUp, setSignedUp] = useState(false)
     const [signedUpMessage, setSignedUpMessage] = useState('Loading Authentication')
     const auth = supabase.auth
 
     useEffect(() => {
         setSignedUpMessage('Please wait, as we finish signing you up. 💖')
         const parsedHash = new URLSearchParams(
-            window.location.hash.substr(1) // skip the first char (#)
+            window.location.hash.split('#')[1] // skip the first char (#)
         );
 
         const errorcode = parsedHash.get('error_code')

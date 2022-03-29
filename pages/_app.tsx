@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-sync-scripts */
 import '../styles/globals.css'
-import type { AppProps } from 'next/app'
 import { motion, useAnimation } from 'framer-motion'
 import { useState } from 'react'
 

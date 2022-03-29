@@ -9,7 +9,7 @@ interface Topbar {
     userData: AuthUser;
 }
 
-export default function Topbar({ animationControl, userData }:Topbar) {
+export default function TopbarComponent({ animationControl, userData }:Topbar) {
 
     const [hoveringInButton, setHoveringInButton] = useState(false)
     const router = useRouter()
