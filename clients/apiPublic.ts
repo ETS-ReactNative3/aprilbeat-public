@@ -1,13 +1,14 @@
 import { serveraddress } from "@/constants/development";
 import { supabase } from "@/clients/supabasePublic";
 import querystring from "querystring";
-import { User } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
+import type { Users } from "@prisma/client";
 import { logIt } from ".";
 
 export async function apifetch(
   path: string,
   { json = true, params = {}, method = "GET", body = {}, authenticated = true }
-) {
+): Promise<any> {
   return new Promise(async (resolve, reject) => {
     const authModule = supabase.auth;
 
@@ -179,5 +180,34 @@ export async function checkUserToken(accessToken: any): Promise<User> {
       });
     }
     resolve(user);
+  });
+}
+
+export const userSignup = async({ email, password, username }) => {
+  return new Promise(async (res, rej) => {
+    const dt = await apifetch("/auth/signup", {
+      method: "POST",
+      body: {
+        email: email,
+        password: password,
+        username: username,
+      },
+    }).catch((err) => {
+      rej(err)
+      return
+    })
+    res(dt)
+  });
+}
+
+export const userData = async(): Promise<Users> => {
+  return new Promise(async (res, rej) => {
+    const dt = await apifetch("/user/me", {
+      method: "GET",
+    }).catch((err) => {
+      rej(err);
+      return;
+    });
+    res(dt);
   });
 }

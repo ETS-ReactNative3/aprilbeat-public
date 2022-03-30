@@ -2,7 +2,7 @@ import { supabase } from "@/clients/supabasePublic"
 import { useEffect, useState } from "react"
 import Dialog from "@/components/DialogComponent"
 import { useRouter } from "next/router"
-import { apifetch } from "@/clients/apiPublic"
+import * as api from "@/clients/apiPublic"
 
 
 export default function AuthIndex(props) {
@@ -80,14 +80,10 @@ export default function AuthIndex(props) {
         setDialogDismissable(false)
         setIsDialogShown(true)
 
-        await apifetch('/user/signup', {
-            body: {
-                email: email,
-                password: password,
-                username: username
-            },
-            json: true,
-            method: 'POST'
+        await api.userSignup({
+            email: email,
+            password: password,
+            username: username
         })
         .catch((error) => {
             setDialogTitle('Unable to Sign Up')
