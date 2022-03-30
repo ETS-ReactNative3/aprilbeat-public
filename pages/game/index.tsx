@@ -103,7 +103,7 @@ export default function GameIndex({ dataProps }) {
 
         setInterval(() => {
             setCurrentFinalFps(currentFps)
-        }, 500)
+        }, 350)
     }
 
     function setWelcomeScreen() {
@@ -181,17 +181,26 @@ export default function GameIndex({ dataProps }) {
     function startAllAudios() {
         const welcmusic = lowLag.playAudio('welcomeMusic')
         welcmusic!.source!.loop = true
+        let lastusedvolval
         // lowLag.getAudio('welcomeMusic')?.gainNode.gain.exponentialRampToValueAtTime(0.01, 5)
 
+        window.addEventListener('keydown', (event) => {
+            if (event.code == 'Minus') {
+                welcmusic?.setVolume(welcmusic.volume() - 0.1)
+            }
+            if (event.code == 'Equal') {
+                welcmusic?.setVolume(welcmusic.volume() + 0.1)
+            }
+        })
+
         window?.addEventListener('blur', () => {
-            // lowLag.getAudio('welcomeMusic')!.gainNode.gain.value = 0.3
-            lowLag.getAudio('welcomeMusic')?.sm.fadeOut({
-                targetValue: 0.5
-            })
+            const aud = lowLag.getAudio('welcomeMusic')
+            aud?.sm.fadeOut(aud?.volume() - 0.5)
         })
         window?.addEventListener('focus', () => {
-            // lowLag.getAudio('welcomeMusic')!.gainNode.gain.value = 0.7
-            lowLag.getAudio('welcomeMusic')?.sm.fadeIn()
+            const aud = lowLag.getAudio('welcomeMusic')
+            // window.audd = aud
+            aud?.sm.fadeIn(aud?.volume() + 0.5)
         })
     }
     function startWelcomeScreen() {

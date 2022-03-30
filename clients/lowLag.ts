@@ -62,6 +62,8 @@ interface AudioData {
     fadeIn: Function;
     fadeOut: Function;
   };
+  volume: Function;
+  setVolume: Function;
 }
 
 const currentlyplayingaudios: any = [];
@@ -91,7 +93,7 @@ export function playAudio(id): AudioData | null {
 
   const smoptions = {
     type: "linear",
-    fadeLength: 0.7,
+    fadeLength: 0.5,
   };
   var sm = smoothfade(audioContext, gainNode, smoptions);
   logIt(`Successfully applied smoothfade configuration to audioContext.`, {
@@ -105,8 +107,55 @@ export function playAudio(id): AudioData | null {
     audioContext,
     gainNode,
     sm: {
-      fadeIn: sm.fadeIn,
-      fadeOut: sm.fadeOut,
+      fadeIn: (volume) => {
+        let finalvol = Number(volume.toFixed(1));
+        if (finalvol > 1) {
+          finalvol = 1;
+        } else if (0 > finalvol) {
+          finalvol = 0;
+        }
+        logIt(`Attempting to fadeIn audio with id "${id}" to "${finalvol}"`, {
+          source: "audioEngine_audio_fadeIn",
+          raw: { id, volumeTo: finalvol },
+        });
+        sm.fadeIn({
+          targetValue: finalvol,
+        });
+        return finalvol * 100;
+      },
+      fadeOut: (volume) => {
+        let finalvol = Number(volume.toFixed(1));
+        if (finalvol > 1) {
+          finalvol = 1;
+        } else if (0 > finalvol) {
+          finalvol = 0;
+        }
+        logIt(`Attempting to fadeOut audio with id "${id}" to "${finalvol}"`, {
+          source: "audioEngine_audio_fadeOut",
+          raw: { id, volumeTo: finalvol },
+        });
+        sm.fadeOut({
+          targetValue: finalvol,
+        });
+        return finalvol * 100;
+      },
+    },
+    volume: () => {
+      return gainNode.gain.value;
+    },
+    setVolume: (volume: number) => {
+      let finalvol = Number(volume.toFixed(1));
+      if (finalvol > 1) {
+        finalvol = 1;
+      } else if (0 > finalvol) {
+        finalvol = 0;
+      }
+      logIt(`Attempting to set audio volume with id "${id}" to "${finalvol}"`, {
+        source: "audioEngine_audio_setVolume",
+        raw: { id, volumeTo: finalvol },
+      });
+      gainNode.gain.value = finalvol;
+      return finalvol * 100;
     },
   };
   currentlyplayingaudios.push(data);

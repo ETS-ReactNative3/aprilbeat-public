@@ -30,6 +30,9 @@
       "@/constants/*": [
         "constants/*"
       ],
+      "@/functions/*": [
+        "functions/*"
+      ],
       "@/public/*": [
         "public/*"
       ],
@@ -41,6 +44,6 @@
       ],
     },
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/projects/[projectid]/[projectid].tsx", "pages/api/socketio.js", "components/ErrorCatcher.jsx", "pages/_document.js", "constants/development.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/projects/[projectid]/[projectid].tsx", "pages/api/socketio.js", "components/ErrorCatcher.jsx", "pages/_document.js", "constants/development.ts", "constants/customTypings/roundings.js"],
   "exclude": ["node_modules"]
 }
