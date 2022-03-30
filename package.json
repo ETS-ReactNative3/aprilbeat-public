@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "dp": "npx prisma db pull && npx prisma generate",
+    "ci": "npm run dp && npm run build",
     "setupfirsttime": "npx prisma push",
     "docker:build": "docker build -t boneapriltea/aprilbeat ."
   },
