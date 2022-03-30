@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/clients/supabase";
 import { prismaClient } from "@/clients/prisma";
-import { rejectHandler } from "@/clients/api";
+import { rejectHandler, resolveHandler } from "@/clients/api";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
@@ -24,7 +24,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     .from("songs")
     .createSignedUrl(songbucketname, 10)
     .then((data) => {
-      res.status(200).send(data.signedURL);
+      resolveHandler(res, {
+        data: {
+          songData: thesong,
+          signedURL: data.signedURL,
+        }
+      })
     });
 
     // supabase.storage

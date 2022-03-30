@@ -2,10 +2,10 @@ import { serveraddress } from "@/constants/development";
 import { supabase } from "@/clients/supabasePublic";
 import querystring from "querystring";
 import type { User } from "@supabase/supabase-js";
-import type { Users } from "@prisma/client";
+import type { Users, Songs } from "@prisma/client";
 import { logIt } from ".";
 
-export async function apifetch(
+async function apifetch(
   path: string,
   { json = true, params = {}, method = "GET", body = {}, authenticated = true }
 ): Promise<any> {
@@ -211,3 +211,19 @@ export const userData = async(): Promise<Users> => {
     res(dt);
   });
 }
+
+interface AudioLink {
+  signedURL: string;
+  songData: Songs
+}
+export const fetchAudioLink = async (songid): Promise<AudioLink> => {
+  return new Promise(async (res, rej) => {
+    const dt = await apifetch(`/storage/bucket/songs/${songid}/objectlink`, {
+      method: "GET",
+    }).catch((err) => {
+      rej(err);
+      return;
+    });
+    res(dt);
+  });
+};

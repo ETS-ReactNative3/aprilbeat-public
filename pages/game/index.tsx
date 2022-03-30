@@ -3,6 +3,7 @@ import { motion, useAnimation } from 'framer-motion'
 import { AppDataProps } from "@/constants/customTypings/app";
 import * as lowLag from '@/clients/lowLag'
 import { useRouter } from "next/router"
+import * as apifetch from "@/clients/apiPublic";
 
 export default function GameIndex({ dataProps }) {
 
@@ -24,9 +25,12 @@ export default function GameIndex({ dataProps }) {
     const [mainMenuVisible, setMainMenuVisible] = useState(false)
     const [isLoaded, setIsLoaded] = useState(false)
     const [currentFinalFps, setCurrentFinalFps] = useState('0')
+    const [currentSongsLoaded, setCurrentSongsLoaded] = useState(0)
     const { state: inTransition, stateSetter: setInTransition } =
         dataProps.inTransition;
     const { state: audioLoaded, stateSetter: setAudioLoaded } = dataProps.audioLoaded
+    const { state: userData, stateSetter: setUserData } =
+        dataProps.userData;
 
     async function enterBeatmapMenu() {
         await dataProps.pageTransitionAnimationControl.mount()
@@ -169,20 +173,51 @@ export default function GameIndex({ dataProps }) {
     async function loadAudios() {
         return new Promise(async (resolve, reject) => {
             if (audioLoaded) {
-                setIsLoaded(true)
                 reject(false)
                 return
             }
-            await lowLag.loadAudio('welcomeMusic', { src: '/assets/introSeasonal.mp3' })
-            setAudioLoaded(true)
-            resolve(true)
+            await lowLag.loadAudio('welcomeMusic', { src: '/assets/introDump.mp3' })
+
+            async function fetchAndLoadAudio(songid) {
+                return new Promise(async (res, rej) => {
+                    const songData = await apifetch.fetchAudioLink(songid)
+                    await lowLag.loadAudio(songid, { src: songData.signedURL })
+                    res(true)
+                    setCurrentSongsLoaded(currentSongsLoaded + 1)
+                })
+            }
+            let passedfirst = false
+            userData?.songs.forEach(async (songid) => {
+                if (!passedfirst) {
+                    await fetchAndLoadAudio(songid).then(() => {
+                        setAudioLoaded(true)
+                        resolve(true)
+                    })
+                    passedfirst = true
+                    return
+                }
+                fetchAndLoadAudio(songid)
+            })
         })
     }
-    function startAllAudios() {
+    async function startAllAudios() {
+        let currentindex = 0
         const welcmusic = lowLag.playAudio('welcomeMusic')
-        welcmusic!.source!.loop = true
-        let lastusedvolval
-        // lowLag.getAudio('welcomeMusic')?.gainNode.gain.exponentialRampToValueAtTime(0.01, 5)
+
+        function relayNextAudio() {
+            welcmusic?.source.addEventListener('ended', async () => {
+                if (currentindex + 1 > userData?.songs.length) {
+                    currentindex = 0
+                }
+                const songid = userData?.songs[currentindex]
+                if (!songid) return
+                const songData = await apifetch.fetchAudioLink(songid)
+                // await lowLag.loadAudio(songid, { src: songData.signedURL })
+                lowLag.playAudio(songid)
+                currentindex++
+            })
+        }
+        relayNextAudio()
 
         window.addEventListener('keydown', (event) => {
             if (event.code == 'Minus') {
@@ -208,17 +243,22 @@ export default function GameIndex({ dataProps }) {
         startWelcomeText()
     }
     useEffect(() => {
-        if (!router.isReady) return
+        if (!router.isReady || !userData) return
         lowLag.init(window)
         loadAudios().then(() => {
             setIsLoaded(true)
         })
         calculateFps()
-    }, [])
+    }, [userData])
+    
 
     useEffect(() => {
         if (!router.isReady) return
+
+        // Router Prefetches
         router.prefetch('/game/menu')
+        router.prefetch('/auth')
+
         if (inTransition == true) {
                 setWelcomeScreen()
                 return
