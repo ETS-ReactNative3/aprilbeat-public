@@ -1,4 +1,5 @@
-import type { AuthUser, AuthSession } from "@supabase/supabase-js";
+import type { AuthUser } from "@supabase/supabase-js";
+import type { Users } from "@prisma/client";
 
 export interface AppDataProps {
   pageTransitionAnimationControl: {
@@ -15,6 +16,10 @@ export interface AppDataProps {
   };
   user: {
     state: AuthUser | undefined;
+    stateSetter: Function;
+  };
+  userData: {
+    state: Users | undefined;
     stateSetter: Function;
   };
 }

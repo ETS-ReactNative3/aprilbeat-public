@@ -78,6 +78,7 @@ export default function Menu({ dataProps }) {
                             >
                                 <img
                                     className={`w-16 h-16 rounded-full`}
+                                    alt={`mikosunePfp`}
                                     src={`/assets/mikosunePfp.webp`}
                                 />
                                 <h1
@@ -94,6 +95,7 @@ export default function Menu({ dataProps }) {
                             >
                                 <img
                                     className={`w-16 h-16 rounded-full `}
+                                    alt={`mikosunePfp`}
                                     src={`/assets/mikosunePfp.webp`}
                                 />
                                 <h1
@@ -110,6 +112,7 @@ export default function Menu({ dataProps }) {
                             >
                                 <img
                                     className={`w-16 h-16 rounded-full `}
+                                    alt={`mikosunePfp`}
                                     src={`/assets/mikosunePfp.webp`}
                                 />
                                 <h1
@@ -126,6 +129,7 @@ export default function Menu({ dataProps }) {
                             >
                                 <img
                                     className={`w-16 h-16 rounded-full `}
+                                    alt={`mikosunePfp`}
                                     src={`/assets/mikosunePfp.webp`}
                                 />
                                 <h1
@@ -142,6 +146,7 @@ export default function Menu({ dataProps }) {
                             >
                                 <img
                                     className={`max-h-16 rounded-full `}
+                                    alt={`mikosunePfp`}
                                     src={`/assets/mikosunePfp.webp`}
                                 />
                                 <h1
@@ -175,6 +180,7 @@ export default function Menu({ dataProps }) {
                             >
                                 <img
                                     className={`h-80 absolute opacity-70 -mt-12 ml-7 object-contain`}
+                                    alt={`hutao`}
                                     src="/assets/hutao.png"
                                 />
                                 <div

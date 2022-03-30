@@ -5,5 +5,5 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  res.status(200).json({ timestamp: 'The current timestamp is ' + new Date().getTime()})
+  res.status(200).send({ status: 'success', code: 200, timestamp: Date.now() })
 }

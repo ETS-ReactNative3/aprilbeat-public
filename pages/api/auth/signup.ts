@@ -51,6 +51,8 @@ export default async function handler(
     data: {
       userid: newuser?.user?.id,
       username: username,
+      lastseen: Date.now().toString(),
+      status: 'online'
     },
   });
   prismaClient.$disconnect();
