@@ -114,7 +114,10 @@ export function playAudio(id): AudioData | null {
         } else if (0 > finalvol) {
           finalvol = 0;
         }
-        console.log(finalvol);
+        logIt(`Attempting to fadeIn audio with id "${id}" to "${finalvol}"`, {
+          source: "audioEngine_audio_fadeIn",
+          raw: { id, volumeTo: finalvol },
+        });
         sm.fadeIn({
           targetValue: finalvol,
         });
@@ -127,7 +130,10 @@ export function playAudio(id): AudioData | null {
         } else if (0 > finalvol) {
           finalvol = 0;
         }
-        console.log(finalvol);
+        logIt(`Attempting to fadeOut audio with id "${id}" to "${finalvol}"`, {
+          source: "audioEngine_audio_fadeOut",
+          raw: { id, volumeTo: finalvol },
+        });
         sm.fadeOut({
           targetValue: finalvol,
         });
@@ -144,7 +150,10 @@ export function playAudio(id): AudioData | null {
       } else if (0 > finalvol) {
         finalvol = 0;
       }
-      console.log(volume, finalvol);
+      logIt(`Attempting to set audio volume with id "${id}" to "${finalvol}"`, {
+        source: "audioEngine_audio_setVolume",
+        raw: { id, volumeTo: finalvol },
+      });
       gainNode.gain.value = finalvol;
       return finalvol * 100;
     },

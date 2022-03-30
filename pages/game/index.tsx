@@ -103,7 +103,7 @@ export default function GameIndex({ dataProps }) {
 
         setInterval(() => {
             setCurrentFinalFps(currentFps)
-        }, 500)
+        }, 350)
     }
 
     function setWelcomeScreen() {
@@ -185,8 +185,6 @@ export default function GameIndex({ dataProps }) {
         // lowLag.getAudio('welcomeMusic')?.gainNode.gain.exponentialRampToValueAtTime(0.01, 5)
 
         window.addEventListener('keydown', (event) => {
-                console.log(event)
-
             if (event.code == 'Minus') {
                 welcmusic?.setVolume(welcmusic.volume() - 0.1)
             }
