@@ -178,20 +178,49 @@ export default function GameIndex({ dataProps }) {
             resolve(true)
         })
     }
+    function lowerVolume(audioid) {
+        const theaud = lowLag.getAudio(audioid)
+        let currvol = theaud?.gainNode?.gain?.value
+        if (!currvol) return
+        console.log(currvol)
+        if (currvol > 0) theaud?.gainNode?.gain?.setValueAtTime((currvol - 0.1), theaud.audioContext.currentTime)
+    }
+    function higherVolume(audioid) {
+        const theaud = lowLag.getAudio(audioid)
+        let currvol = theaud?.gainNode?.gain?.value
+        if (!currvol) return
+        console.log(currvol)
+        if (1 > currvol) theaud?.gainNode?.gain?.setValueAtTime((currvol + 0.1), theaud.audioContext.currentTime)
+    }
     function startAllAudios() {
         const welcmusic = lowLag.playAudio('welcomeMusic')
         welcmusic!.source!.loop = true
         // lowLag.getAudio('welcomeMusic')?.gainNode.gain.exponentialRampToValueAtTime(0.01, 5)
 
+        window.addEventListener('keydown', (event) => {
+                console.log(event)
+
+            if (event.code == 'Minus') {
+                lowerVolume('welcomeMusic')
+            }
+            if (event.code == 'Equal') {
+                higherVolume('welcomeMusic')
+            }
+        })
+
         window?.addEventListener('blur', () => {
             // lowLag.getAudio('welcomeMusic')!.gainNode.gain.value = 0.3
-            lowLag.getAudio('welcomeMusic')?.sm.fadeOut({
-                targetValue: 0.5
+            const aud = lowLag.getAudio('welcomeMusic')
+            aud?.sm.fadeOut({
+                targetValue: 0 > (aud.gainNode.gain.value - 0.35) ? 0 : aud.gainNode.gain.value - 0.35
             })
         })
         window?.addEventListener('focus', () => {
             // lowLag.getAudio('welcomeMusic')!.gainNode.gain.value = 0.7
-            lowLag.getAudio('welcomeMusic')?.sm.fadeIn()
+            const aud = lowLag.getAudio('welcomeMusic')
+            aud?.sm.fadeIn({
+                targetValue: (aud.gainNode.gain.value + 0.35)  > 1 ? 1 : aud.gainNode.gain.value + 0.35
+            })
         })
     }
     function startWelcomeScreen() {
