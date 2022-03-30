@@ -195,6 +195,7 @@ export default function GameIndex({ dataProps }) {
     function startAllAudios() {
         const welcmusic = lowLag.playAudio('welcomeMusic')
         welcmusic!.source!.loop = true
+        let lastusedvolval
         // lowLag.getAudio('welcomeMusic')?.gainNode.gain.exponentialRampToValueAtTime(0.01, 5)
 
         window.addEventListener('keydown', (event) => {
@@ -211,15 +212,16 @@ export default function GameIndex({ dataProps }) {
         window?.addEventListener('blur', () => {
             // lowLag.getAudio('welcomeMusic')!.gainNode.gain.value = 0.3
             const aud = lowLag.getAudio('welcomeMusic')
+            lastusedvolval = aud?.gainNode.gain.value
             aud?.sm.fadeOut({
-                targetValue: 0 > (aud.gainNode.gain.value - 0.35) ? 0 : aud.gainNode.gain.value - 0.35
+                targetValue: 0.3
             })
         })
         window?.addEventListener('focus', () => {
             // lowLag.getAudio('welcomeMusic')!.gainNode.gain.value = 0.7
             const aud = lowLag.getAudio('welcomeMusic')
             aud?.sm.fadeIn({
-                targetValue: (aud.gainNode.gain.value + 0.35)  > 1 ? 1 : aud.gainNode.gain.value + 0.35
+                targetValue: lastusedvolval
             })
         })
     }
