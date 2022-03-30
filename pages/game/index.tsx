@@ -178,20 +178,6 @@ export default function GameIndex({ dataProps }) {
             resolve(true)
         })
     }
-    function lowerVolume(audioid) {
-        const theaud = lowLag.getAudio(audioid)
-        let currvol = theaud?.gainNode?.gain?.value
-        if (!currvol) return
-        console.log(currvol)
-        if (currvol > 0) theaud?.gainNode?.gain?.setValueAtTime((currvol - 0.1), theaud.audioContext.currentTime)
-    }
-    function higherVolume(audioid) {
-        const theaud = lowLag.getAudio(audioid)
-        let currvol = theaud?.gainNode?.gain?.value
-        if (!currvol) return
-        console.log(currvol)
-        if (1 > currvol) theaud?.gainNode?.gain?.setValueAtTime((currvol + 0.1), theaud.audioContext.currentTime)
-    }
     function startAllAudios() {
         const welcmusic = lowLag.playAudio('welcomeMusic')
         welcmusic!.source!.loop = true
@@ -202,27 +188,21 @@ export default function GameIndex({ dataProps }) {
                 console.log(event)
 
             if (event.code == 'Minus') {
-                lowerVolume('welcomeMusic')
+                welcmusic?.setVolume(welcmusic.volume() - 0.1)
             }
             if (event.code == 'Equal') {
-                higherVolume('welcomeMusic')
+                welcmusic?.setVolume(welcmusic.volume() + 0.1)
             }
         })
 
         window?.addEventListener('blur', () => {
-            // lowLag.getAudio('welcomeMusic')!.gainNode.gain.value = 0.3
             const aud = lowLag.getAudio('welcomeMusic')
-            lastusedvolval = aud?.gainNode.gain.value
-            aud?.sm.fadeOut({
-                targetValue: 0.3
-            })
+            aud?.sm.fadeOut(aud?.volume() - 0.5)
         })
         window?.addEventListener('focus', () => {
-            // lowLag.getAudio('welcomeMusic')!.gainNode.gain.value = 0.7
             const aud = lowLag.getAudio('welcomeMusic')
-            aud?.sm.fadeIn({
-                targetValue: lastusedvolval
-            })
+            // window.audd = aud
+            aud?.sm.fadeIn(aud?.volume() + 0.5)
         })
     }
     function startWelcomeScreen() {
