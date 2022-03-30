@@ -21,6 +21,7 @@ model Users {
   lastseen   String?
   status     String?
   userid     String?   @unique
+  songs      String[]  @db.Uuid
 }
 
 model Songs {
