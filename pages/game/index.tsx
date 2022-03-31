@@ -181,7 +181,7 @@ export default function GameIndex({ dataProps }) {
                 reject(false)
                 return
             }
-            await lowLag.loadAudio('welcomeMusic', { src: '/assets/introSeasonal.mp3' })
+            await lowLag.loadAudio('welcomeMusic', { src: '/assets/introDump.mp3' })
             resolve(true)
         })
     }
@@ -243,6 +243,7 @@ export default function GameIndex({ dataProps }) {
 
         window.addEventListener('keydown', (event) => {
             if (event.code == 'Minus') {
+                console.log(lowLag.getGlobalVolume())
                 lowLag?.setGlobalVolume(lowLag.getGlobalVolume() - 0.1, {})
             }
             if (event.code == 'Equal') {
