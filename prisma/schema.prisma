@@ -30,4 +30,5 @@ model Songs {
   title      String?
   artist     String[]
   filename   String?   @unique
+  bpm        String    @default("120")
 }

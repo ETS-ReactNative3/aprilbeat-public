@@ -18,7 +18,7 @@ export default function Play() {
             lowLag.loadAudio('nana_geoxor', { src: `/geoxorNana.mp3` })
 
             setTimeout(() => {
-                lowLag.playAudio('nana_geoxor')
+                lowLag.playAudio('nana_geoxor', {})
             }, 2000)
         }
     }, [])

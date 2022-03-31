@@ -4,6 +4,7 @@ import { AppDataProps } from "@/constants/customTypings/app";
 import * as lowLag from '@/clients/lowLag'
 import { useRouter } from "next/router"
 import * as apifetch from "@/clients/apiPublic";
+import { Songs } from '@prisma/client'
 
 export default function GameIndex({ dataProps }) {
 
@@ -18,6 +19,8 @@ export default function GameIndex({ dataProps }) {
     const topBarAnimationControl = useAnimation()
 
     const [currentScreen, setCurrentScreen] = useState('')
+    const [startSequenceRan, setStartSequenceRan] = useState(false)
+    const [remainingAudiosLoaded, setRemainingAudiosLoaded] = useState(false)
     const [welcomeText, setWelcomeText] = useState('')
     const [welcomeSplashVisible, setWelcomeSplashVisible] = useState(true)
     const [welcomeScreenVisible, setWelcomeScreenVisible] = useState(false)
@@ -25,10 +28,12 @@ export default function GameIndex({ dataProps }) {
     const [mainMenuVisible, setMainMenuVisible] = useState(false)
     const [isLoaded, setIsLoaded] = useState(false)
     const [currentFinalFps, setCurrentFinalFps] = useState('0')
-    const [currentSongsLoaded, setCurrentSongsLoaded] = useState(0)
+    const [currentBackgroundSong, setCurrentBackgroundSong] = useState<Songs>()
     const { state: inTransition, stateSetter: setInTransition } =
         dataProps.inTransition;
     const { state: audioLoaded, stateSetter: setAudioLoaded } = dataProps.audioLoaded
+    const { state: user, stateSetter: setUser } =
+        dataProps.user;
     const { state: userData, stateSetter: setUserData } =
         dataProps.userData;
 
@@ -170,24 +175,33 @@ export default function GameIndex({ dataProps }) {
             }, 200)
         }, 300);
     }
-    async function loadAudios() {
+    async function loadNeededAudios() {
         return new Promise(async (resolve, reject) => {
             if (audioLoaded) {
                 reject(false)
                 return
             }
-            await lowLag.loadAudio('welcomeMusic', { src: '/assets/introDump.mp3' })
+            await lowLag.loadAudio('welcomeMusic', { src: '/assets/introSeasonal.mp3' })
+            resolve(true)
+        })
+    }
+    async function loadRemainingAudios() {
+        return new Promise((resolve, reject) => {
 
             async function fetchAndLoadAudio(songid) {
                 return new Promise(async (res, rej) => {
                     const songData = await apifetch.fetchAudioLink(songid)
                     await lowLag.loadAudio(songid, { src: songData.signedURL })
                     res(true)
-                    setCurrentSongsLoaded(currentSongsLoaded + 1)
                 })
             }
+
             let passedfirst = false
+            if (!userData && !user) {
+                resolve(true)
+            }
             userData?.songs.forEach(async (songid) => {
+
                 if (!passedfirst) {
                     await fetchAndLoadAudio(songid).then(() => {
                         setAudioLoaded(true)
@@ -200,12 +214,18 @@ export default function GameIndex({ dataProps }) {
             })
         })
     }
+    useEffect(() => {
+        if (!userData || !user || remainingAudiosLoaded) return
+        loadRemainingAudios()
+        setRemainingAudiosLoaded(true)
+    }, [userData, user])
+    
     async function startAllAudios() {
         let currentindex = 0
-        const welcmusic = lowLag.playAudio('welcomeMusic')
+        const welcmusic = lowLag.playAudio('welcomeMusic', {})
 
-        function relayNextAudio() {
-            welcmusic?.source.addEventListener('ended', async () => {
+        function relayNextAudio(audio) {
+            audio?.source.addEventListener('ended', async () => {
                 if (currentindex + 1 > userData?.songs.length) {
                     currentindex = 0
                 }
@@ -213,57 +233,56 @@ export default function GameIndex({ dataProps }) {
                 if (!songid) return
                 const songData = await apifetch.fetchAudioLink(songid)
                 // await lowLag.loadAudio(songid, { src: songData.signedURL })
-                lowLag.playAudio(songid)
+                const newaudio = lowLag.playAudio(songid, {})
+                setCurrentBackgroundSong(songData.songData)
+                relayNextAudio(newaudio)
                 currentindex++
             })
         }
-        relayNextAudio()
+        relayNextAudio(welcmusic)
 
         window.addEventListener('keydown', (event) => {
             if (event.code == 'Minus') {
-                welcmusic?.setVolume(welcmusic.volume() - 0.1)
+                lowLag?.setGlobalVolume(lowLag.getGlobalVolume() - 0.1, {})
             }
             if (event.code == 'Equal') {
-                welcmusic?.setVolume(welcmusic.volume() + 0.1)
+                lowLag?.setGlobalVolume(lowLag.getGlobalVolume() + 0.1, {})
             }
         })
 
         window?.addEventListener('blur', () => {
-            const aud = lowLag.getAudio('welcomeMusic')
-            aud?.sm.fadeOut(aud?.volume() - 0.5)
+            lowLag.setGlobalVolume(lowLag.getGlobalVolume() - 0.2, {})
         })
         window?.addEventListener('focus', () => {
-            const aud = lowLag.getAudio('welcomeMusic')
-            // window.audd = aud
-            aud?.sm.fadeIn(aud?.volume() + 0.5)
+            lowLag.setGlobalVolume(lowLag.getGlobalVolume() + 0.2, {})
         })
     }
     function startWelcomeScreen() {
         startAllAudios()
         startWelcomeText()
     }
-    useEffect(() => {
-        if (!router.isReady || !userData) return
-        lowLag.init(window)
-        loadAudios().then(() => {
-            setIsLoaded(true)
-        })
-        calculateFps()
-    }, [userData])
     
 
     useEffect(() => {
-        if (!router.isReady) return
+        if (!router.isReady || startSequenceRan) return
 
         // Router Prefetches
         router.prefetch('/game/menu')
         router.prefetch('/auth')
 
+        setStartSequenceRan(true)
         if (inTransition == true) {
+                setIsLoaded(true)
                 setWelcomeScreen()
                 return
         }
-    }, [router.isReady])
+
+        lowLag.init(window)
+        loadNeededAudios().then(() => {
+            setIsLoaded(true)
+        })
+        calculateFps()
+    }, [router.isReady, userData, user])
 
     return (
         <div style={{ backgroundRepeat: 'no-repeat', background: 'linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url(/assets/background.png)' }} className={`w-full h-full min-h-screen flex bg-black flex-col bg-cover bg-center text-white`}>
@@ -317,7 +336,7 @@ export default function GameIndex({ dataProps }) {
                     <motion.button
                     initial={{ scale: 1 }}
                     animate={welcomeScreenButtonAnimationControl}
-                    transition={{ ease: 'easeOut', duration: ((60 / 131.8) * 2) }}
+                        transition={{ ease: 'easeOut', duration: ((60 / Number(currentBackgroundSong?.bpm) || 126) * 2) }}
                     className={`bg-blue-300 rounded-md firstbounce flex justify-center items-center outline outline-8 outline-blue-600 w-52 h-52 lg:w-64 lg:h-64`}
                     onClick={() => showMainMenu()}
                     onMouseEnter={

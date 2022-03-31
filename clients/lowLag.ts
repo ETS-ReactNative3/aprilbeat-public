@@ -19,6 +19,7 @@ export function init(window) {
   return true;
 }
 
+const awaitingforload: string[] = [];
 const audioincache: any = {};
 export async function loadAudio(id, { src }): Promise<boolean> {
   return new Promise(async (resolve, reject) => {
@@ -49,6 +50,25 @@ export async function loadAudio(id, { src }): Promise<boolean> {
         raw: { id, src },
       }
     );
+
+    // Check for retries of playing this audio
+    const audiowaitedtoload = awaitingforload.find(
+      (waitingaudioid) => waitingaudioid == id
+    );
+    if (audiowaitedtoload) {
+      const indexofaudio = awaitingforload.findIndex(
+        (waitingaudioid) => waitingaudioid == id
+      );
+      logIt(
+        `Audio is waiting to play with id "${id}" from "${src}", now playing since loading is complete.`,
+        {
+          source: "audioEngine_retryAfterLoadAudio",
+          raw: { id, src },
+        }
+      );
+      playAudio(id, { retryAfter: false })
+      delete awaitingforload[indexofaudio];
+    }
     resolve(true);
   });
 }
@@ -65,20 +85,25 @@ interface AudioData {
   volume: Function;
   setVolume: Function;
 }
+const allplayedaudios: AudioData[] = [];
+const currentlyplayingaudios: AudioData[] = [];
 
-const currentlyplayingaudios: any = [];
-export function playAudio(id): AudioData | null {
+export function playAudio(id, { retryAfter = true }): AudioData | null {
   const lowLag = windowobject.lowLag;
   if (!audioincache[id]) {
-    console.log(`Audio not found in cache: ${id}`);
     logIt(
-      `Audio failed to play becuase it does not exist in cache with id "${id}".`,
+      `Audio failed to play becuase it does not exist in cache with id "${id}". Will try to play again after loaded if retryAfter is enabled.`,
       {
         source: "audioEngine_playAudio",
         level: "error",
-        raw: { id, audiocache: audioincache },
+        raw: { id, audiocache: audioincache, retryAfter },
       }
     );
+
+    if (retryAfter) {
+      awaitingforload.push(id)
+    }
+    
     return null;
   }
   logIt(`Attempting to play audio with id "${id}"`, {
@@ -159,6 +184,14 @@ export function playAudio(id): AudioData | null {
     },
   };
   currentlyplayingaudios.push(data);
+  allplayedaudios.push(data);
+
+  source.addEventListener('ended', () => {
+    let theaudioindex = currentlyplayingaudios.findIndex(
+      (audiodata) => audiodata.id == id
+    );
+    delete currentlyplayingaudios[theaudioindex];
+  })
   logIt(`Added AudioContext to audioplaying cache`, {
     source: "audioEngine_playAudio",
     raw: { data: data },
@@ -186,6 +219,35 @@ export function stopAudio(id): boolean {
   );
   if (!selectedinarray) return false;
 
-  selectedinarray.context.stop();
+  selectedinarray.source.stop();
   return true;
+}
+
+export function setGlobalVolume(volume, { withEase = false, fadeType = 'fadeIn' }:{ withEase?: boolean; fadeType?: 'fadeIn' | 'fadeOut' }): boolean {
+
+  const finalvolume = Number(volume.toFixed(1));
+  logIt(`Attempting to set global audio volume with id to "${finalvolume}"`, {
+    source: "audioEngine_audio_setVolume",
+    raw: { volume, finalvolume, withEase, fadeType, currentlyplayingaudios },
+  });
+
+  currentlyplayingaudios.forEach((audio) => {
+    if (!withEase) {
+      audio.setVolume(volume);
+      return true
+    }
+
+    audio.sm[fadeType](volume);
+    return true
+  })
+  return true;
+}
+
+export function getGlobalVolume(): number {
+    const allvolumes = currentlyplayingaudios.reduce(
+      (partialSum, audio) => partialSum + audio.volume(),
+      0
+    );
+    const avgvolume = Number((allvolumes / currentlyplayingaudios.length).toFixed(1))
+    return avgvolume
 }

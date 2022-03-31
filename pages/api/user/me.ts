@@ -1,8 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { resolveHandler, rejectHandler } from "@/clients/api";
-import { checkUserToken } from "@/clients/apiPublic";
+import { checkUserToken } from "@/clients/api";
 import { prismaClient } from "@/clients/prisma";
-import { supabase } from "@/clients/supabase";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(

@@ -1,7 +1,6 @@
 import { serveraddress } from "@/constants/development";
 import { supabase } from "@/clients/supabasePublic";
 import querystring from "querystring";
-import type { User } from "@supabase/supabase-js";
 import type { Users, Songs } from "@prisma/client";
 import { logIt } from ".";
 
@@ -60,8 +59,23 @@ async function apifetch(
           },
         });
 
-        if (json) finalresponse = await response.json();
-        if (!finalresponse?.success) {
+        try {
+          if (json) finalresponse = await response.json();
+          else finalresponse = response["arrayBuffer"]();
+        } catch (e) {
+          logIt(`API Failed to parse response for "${path}"`, {
+            level: "error",
+            source: "api_handler",
+            raw: {
+              rawresponse: response,
+              path: path,
+              params: params,
+              options: finaloptions,
+            },
+          });
+          reject(e);
+        }
+        if (!(finalresponse?.success) && json) {
           logIt(
             `API Endpoint Failure for "${path}": ${
               finalresponse?.reason || "Unknown Error"
@@ -95,10 +109,10 @@ async function apifetch(
         //   },
         // });
         // NProgress.done(true);
-        resolve(finalresponse?.data);
+        resolve(json ? finalresponse?.data : finalresponse);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         logIt(`API Endpoint Failure for "${path}": ${err || "Unknown Error"}`, {
           level: "error",
           source: "api_handler",
@@ -161,25 +175,6 @@ export async function fetchAllData(): Promise<FetchedData> {
     } catch (e) {
       reject(e);
     }
-  });
-}
-
-export async function checkUserToken(accessToken: any): Promise<User> {
-  return new Promise(async (resolve, reject) => {
-    if (!accessToken) {
-      reject({ code: 400, message: "Unauthenticated User" });
-    }
-
-    const auth = supabase.auth;
-    const getuserDetails = await auth.api.getUser(accessToken.toString());
-    const user: any = getuserDetails.user;
-    if (!user) {
-      return reject({
-        code: 401,
-        message: "Invalid User Authentication Keychain provided.",
-      });
-    }
-    resolve(user);
   });
 }
 
