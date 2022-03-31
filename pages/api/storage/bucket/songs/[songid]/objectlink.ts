@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   supabase.storage
     .from("songs")
-    .createSignedUrl(songbucketname, 10)
+    .createSignedUrl(songbucketname, 180)
     .then((data) => {
       resolveHandler(res, {
         data: {

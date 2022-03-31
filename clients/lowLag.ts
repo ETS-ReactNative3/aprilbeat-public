@@ -233,11 +233,11 @@ export function setGlobalVolume(volume, { withEase = false, fadeType = 'fadeIn' 
 
   currentlyplayingaudios.forEach((audio) => {
     if (!withEase) {
-      audio.setVolume(volume);
+      audio.setVolume(finalvolume);
       return true
     }
 
-    audio.sm[fadeType](volume);
+    audio.sm[fadeType](finalvolume);
     return true
   })
   return true;
@@ -245,9 +245,24 @@ export function setGlobalVolume(volume, { withEase = false, fadeType = 'fadeIn' 
 
 export function getGlobalVolume(): number {
     const allvolumes = currentlyplayingaudios.reduce(
-      (partialSum, audio) => partialSum + audio.volume(),
+      (partialSum, audio) => {
+        return partialSum + audio.volume()
+      },
       0
     );
-    const avgvolume = Number((allvolumes / currentlyplayingaudios.length).toFixed(1))
+    const actualcurrentlyplayingaudios = currentlyplayingaudios.reduce(
+      (partialSum, audio) => {
+        if (audio) {
+          return partialSum + 1
+        } else {
+          return partialSum
+        }
+      },
+      0
+    );
+    const avgvolume = Number(
+      (allvolumes / actualcurrentlyplayingaudios).toFixed(1)
+    );
+        console.warn(currentlyplayingaudios, avgvolume);
     return avgvolume
 }
