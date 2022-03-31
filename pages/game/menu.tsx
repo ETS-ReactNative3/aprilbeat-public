@@ -23,6 +23,13 @@ export default function Menu({ dataProps }) {
 
     }, []);
 
+    function goHome() {
+        console.log('abcdefgh')
+        setInTransition(true);
+        router.push("/game");
+        return;
+    }
+
     useEffect(() => {
         if (inTransition == false) {
             window.location.href = "/game";
@@ -33,16 +40,15 @@ export default function Menu({ dataProps }) {
             if (event.repeat) return;
 
             if (event.key == "Escape") {
-                setInTransition(true);
-                router.push("/game");
-                return;
+                goHome()
+                return
             }
         });
     }, []);
 
     return (
         <div className={`bg-[#F0F2F3] dark:bg-[#202020] pb-12`}>
-            <Topbar animationControl={topBarAnimationControl} userData={user} inTransitionSetter={setInTransition} />
+            <Topbar functions={{ backToHome: goHome }} animationControl={topBarAnimationControl} userData={user} inTransitionSetter={setInTransition} />
 
             <motion.div
                 className={`w-full flex min-h-screen h-full`}

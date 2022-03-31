@@ -11,9 +11,12 @@ interface Topbar {
     animationControl?: any
     userData: AuthUser | undefined;
     inTransitionSetter: any;
+    functions: {
+        backToHome: Function
+    }
 }
 
-export default function TopbarComponent({ animationControl, userData, inTransitionSetter }:Topbar) {
+export default function TopbarComponent({ animationControl, userData, inTransitionSetter, functions }:Topbar) {
 
     const [hoveringInButton, setHoveringInButton] = useState(false)
     const router = useRouter()
@@ -79,9 +82,7 @@ export default function TopbarComponent({ animationControl, userData, inTransiti
                                     },
                                     customClasses: 'ml-3',
                                     callback: () => {
-                                        inTransitionSetter(true);
-                                        router.push('/game', '/game')
-                                        return null
+                                        functions.backToHome()
                                     },
                                 },
                             ]

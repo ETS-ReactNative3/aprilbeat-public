@@ -5,7 +5,7 @@ import * as lowLag from '@/clients/lowLag'
 import { useRouter } from "next/router"
 import * as apifetch from "@/clients/apiPublic";
 import { Songs } from '@prisma/client'
-import BottomBar from "@/components/bottomBar";
+import BottomBar from "@/components/bottomBar.client";
 import InfoBar from '@/components/Infobar'
 
 export default function GameIndex({ dataProps }) {
@@ -16,7 +16,6 @@ export default function GameIndex({ dataProps }) {
     const welcomeSplashAnimationControl = useAnimation()
     const welcomeTextAnimationControl = useAnimation()
     const welcomeScreenAnimationControl = useAnimation()
-    const mainMenuAnimationControl = useAnimation()
     const sideBeatIndicatorAnimationControl = useAnimation()
     const infoBarAnimationControl = useAnimation()
 
@@ -51,15 +50,10 @@ export default function GameIndex({ dataProps }) {
         setCurrentScreen('splash')
 
 
-        mainMenuAnimationControl.start({
-            opacity: 0
-        })
-        .finally(() => {
-            setWelcomeScreenVisible(true)
+        setWelcomeScreenVisible(true)
             welcomeScreenAnimationControl.start({
                 opacity: 1
             })
-        })
     }
 
     async function showMainMenu() {
@@ -75,18 +69,18 @@ export default function GameIndex({ dataProps }) {
 
     useEffect(() => {
 
-        document.addEventListener('keydown', (event) => {
-            if (event.repeat) return
+        // document.addEventListener('keydown', (event) => {
+        //     if (event.repeat) return
 
-            if (event.key == 'Enter') {
-                showMainMenu()
-                return
-            }
-            if (event.key == 'Escape') {
-                hideMainMenu()
-                return
-            }
-        })
+        //     if (event.key == 'Enter') {
+        //         showMainMenu()
+        //         return
+        //     }
+        //     if (event.key == 'Escape') {
+        //         hideMainMenu()
+        //         return
+        //     }
+        // })
     }, [])
 
     function setWelcomeScreen() {
@@ -259,7 +253,6 @@ export default function GameIndex({ dataProps }) {
     // Main Starting Script
     useEffect(() => {
         if (!router.isReady || startSequenceRan) return
-        console.log(inTransition)
 
         // Router Prefetches
         router.prefetch('/game/menu')
@@ -268,8 +261,8 @@ export default function GameIndex({ dataProps }) {
         setStartSequenceRan(true)
         if (inTransition == true) {
                 setIsLoaded(true)
-                setWelcomeScreen()
                 setInTransition(false)
+                setWelcomeScreen()
                 return
         }
 

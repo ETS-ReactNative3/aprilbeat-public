@@ -1,32 +1,44 @@
 import Head from "next/head";
 import Script from 'next/script'
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as lowLag from "@/clients/lowLag"
+import * as api from "@/clients/apiPublic"
+import { Beatmaps } from "@prisma/client"
+import { useRouter } from "next/router";
 
-export default function Play({ pageProps }) {
+export default function Play({ dataProps }) {
+
+    const router = useRouter()
+    const [gameReady, setGameReady] = useState<boolean>(false)
+    const [beatmapData, setBeatmapData] = useState<Beatmaps>()
 
     useEffect(() => {
-        const lowLagScript = document.getElementById('lowLagScript')
-        lowLagScript!.onload = () => {
-            lowLag.init(window)
-            lowLag.loadAudio('nana_geoxor', { src: `/geoxorNana.mp3` })
+        (async () => {
+            console.log('abcddd')
 
-            setTimeout(() => {
-                lowLag.playAudio('nana_geoxor', {})
-            }, 2000)
-        }
+            // Initialize the game
+            lowLag.init(window)
+
+            // Fetch beatmap and save to state
+            const { beatmapid } = router.query
+            const beatmap = await api.fetchBeatmap(beatmapid)
+            const beatmapsong = await api.fetchAudioLink(beatmap.songid)
+                setBeatmapData(beatmap)
+                // Load Audio to lowLag
+                await lowLag.loadAudio(`audio_${beatmap.beatmapid}`, { src: beatmapsong.signedURL })
+                lowLag.playAudio(`audio_${beatmap.beatmapid}`, {})
+
+
+            // Mark game as ready (must be the end after all fetches.)
+            setGameReady(true)
+        })()
     }, [])
 
     return (
-        <>
-                <Script src="/libs/lowLag.js"></Script>
-                <Script id="lowLagScript" src="/libs/soundmanager2-jsmin.js"></Script>
-            <div className={`w-full h-full min-h-screen`}>
-                <audio src={`/geoxorNana.mp3`} autoPlay={false}></audio>
-                <div className={`bg-[#D069A3] w-full h-full min-h-screen`}>
+        <div className={`w-full h-full min-h-screen`}>
+            <div className={`bg-[#D069A3] w-full h-full min-h-screen`}>
 
-                </div>
             </div>
-        </>
+        </div>
     )
 }
