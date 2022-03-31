@@ -24,7 +24,7 @@ const awaitingforload: string[] = [];
 const audioincache: any = {};
 export async function loadAudio(id, { src }): Promise<boolean> {
   return new Promise(async (resolve, reject) => {
-    if (!id) reject(false);
+    if (!id || !src) reject(false);
     if (!initialized) {
       logIt(
         `Failed to play audio because audio engine has not been initialized`,
@@ -191,7 +191,7 @@ export function playAudio(id, { retryAfter = true }): AudioData | null {
 
   source.addEventListener('ended', () => {
     let theaudioindex = currentlyplayingaudios.findIndex(
-      (audiodata) => audiodata.id == id
+      (audiodata) => audiodata?.id || '0' == id
     );
     delete currentlyplayingaudios[theaudioindex];
   })
@@ -268,6 +268,5 @@ export function getGlobalVolume(): number {
     const avgvolume = Number(
       (allvolumes / actualcurrentlyplayingaudios).toFixed(1)
     );
-        console.warn(currentlyplayingaudios, avgvolume);
     return avgvolume
 }

@@ -14,12 +14,12 @@ export default function Menu({ dataProps }) {
     const router = useRouter();
 
     useEffect(() => {
-        topBarAnimationControl.start({
-            translateY: 0,
-        });
-        mainMenuAnimationControl.start({
-            opacity: 1,
-        });
+        setTimeout(() => {
+            topBarAnimationControl.start({
+                translateY: 0,
+            });
+        }, 50);
+        dataProps.pageTransitionAnimationControl.unmount()
 
     }, []);
 
@@ -42,12 +42,12 @@ export default function Menu({ dataProps }) {
 
     return (
         <div className={`bg-[#F0F2F3] dark:bg-[#202020] pb-12`}>
-            <Topbar animationControl={topBarAnimationControl} userData={user} />
+            <Topbar animationControl={topBarAnimationControl} userData={user} inTransitionSetter={setInTransition} />
 
             <motion.div
                 className={`w-full flex min-h-screen h-full`}
                 animate={mainMenuAnimationControl}
-                initial={{ opacity: 0 }}
+                initial={{ opacity: 1 }}
                 transition={{ ease: "easeInOut", duration: 0.2 }}
             >
                 <div className={`h-full w-full flex flex-col px-7 pt-[40px]`}>

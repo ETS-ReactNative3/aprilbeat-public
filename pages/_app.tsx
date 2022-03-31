@@ -116,7 +116,7 @@ function MyApp({ Component, pageProps }) {
                 initial={{ translateX: '-100vw' }}
                 transition={{ ease: 'easeOut', duration: 0.2 }}
                 animate={pageTransitionAnimationControl}
-                className={`absolute w-full z-10 h-screen bg-gray-800`}
+                className={`absolute overflow-hidden w-full z-50 h-screen bg-gray-800`}
             />
             <Component {...pageProps} dataProps={dataProps} />
           </div>

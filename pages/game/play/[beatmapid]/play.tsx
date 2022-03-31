@@ -3,13 +3,7 @@ import Script from 'next/script'
 import { useEffect } from "react";
 import * as lowLag from "@/clients/lowLag"
 
-declare global {
-  interface Window {
-    lowLag?: any;
-  }
-}
-
-export default function Play() {
+export default function Play({ pageProps }) {
 
     useEffect(() => {
         const lowLagScript = document.getElementById('lowLagScript')

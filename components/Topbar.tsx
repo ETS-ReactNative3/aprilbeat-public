@@ -5,13 +5,15 @@ import { useRouter } from 'next/router'
 import type { AuthUser } from '@supabase/supabase-js'
 import useErrorBoundary from "use-error-boundary"
 import ErrorCatcher from './ErrorCatcher';
+import { supabase } from '@/clients/supabasePublic'
 
 interface Topbar {
     animationControl?: any
     userData: AuthUser | undefined;
+    inTransitionSetter: any;
 }
 
-export default function TopbarComponent({ animationControl, userData }:Topbar) {
+export default function TopbarComponent({ animationControl, userData, inTransitionSetter }:Topbar) {
 
     const [hoveringInButton, setHoveringInButton] = useState(false)
     const router = useRouter()
@@ -77,6 +79,7 @@ export default function TopbarComponent({ animationControl, userData }:Topbar) {
                                     },
                                     customClasses: 'ml-3',
                                     callback: () => {
+                                        inTransitionSetter(true);
                                         router.push('/game', '/game')
                                         return null
                                     },
@@ -122,7 +125,9 @@ export default function TopbarComponent({ animationControl, userData }:Topbar) {
                                     },
                                     customClasses: '',
                                     callback: () => {
-                                        router.push('/auth', '/game')
+                                        const user = supabase.auth.user()
+                                        if (!user) router.push('/auth', '/game')
+                                        else return null
                                     },
                                 },
                                 {

@@ -5,6 +5,8 @@ import * as lowLag from '@/clients/lowLag'
 import { useRouter } from "next/router"
 import * as apifetch from "@/clients/apiPublic";
 import { Songs } from '@prisma/client'
+import BottomBar from "@/components/bottomBar";
+import InfoBar from '@/components/Infobar'
 
 export default function GameIndex({ dataProps }) {
 
@@ -16,7 +18,11 @@ export default function GameIndex({ dataProps }) {
     const welcomeScreenAnimationControl = useAnimation()
     const mainMenuAnimationControl = useAnimation()
     const sideBeatIndicatorAnimationControl = useAnimation()
-    const topBarAnimationControl = useAnimation()
+    const infoBarAnimationControl = useAnimation()
+
+    const [infoBarVisible, setInfoBarVisible] = useState(false)
+    const [infoBarTitle, setInfoBarTitle] = useState<string | null>('')
+    const [infoBarDescription, setInfoBarDescription] = useState('')
 
     const [currentScreen, setCurrentScreen] = useState('')
     const [startSequenceRan, setStartSequenceRan] = useState(false)
@@ -25,9 +31,7 @@ export default function GameIndex({ dataProps }) {
     const [welcomeSplashVisible, setWelcomeSplashVisible] = useState(true)
     const [welcomeScreenVisible, setWelcomeScreenVisible] = useState(false)
     const [splashStarted, setSplashStarted] = useState(false)
-    const [mainMenuVisible, setMainMenuVisible] = useState(false)
     const [isLoaded, setIsLoaded] = useState(false)
-    const [currentFinalFps, setCurrentFinalFps] = useState('0')
     const [currentBackgroundSong, setCurrentBackgroundSong] = useState<Songs>()
     const { state: inTransition, stateSetter: setInTransition } =
         dataProps.inTransition;
@@ -46,13 +50,9 @@ export default function GameIndex({ dataProps }) {
         if (currentScreen == 'splash') return
         setCurrentScreen('splash')
 
-        topBarAnimationControl.start({
-                translateY: -40
-        })
+
         mainMenuAnimationControl.start({
             opacity: 0
-        }).then(() => {
-            setMainMenuVisible(false)
         })
         .finally(() => {
             setWelcomeScreenVisible(true)
@@ -66,13 +66,8 @@ export default function GameIndex({ dataProps }) {
         if (currentScreen == 'mainmenu') return
         setCurrentScreen('mainmenu')
 
-        welcomeScreenAnimationControl.start({
-            opacity: 0
-        }).then(() => {
-            setWelcomeScreenVisible(false)
-        })
-        .finally(() => {
-            setMainMenuVisible(true)
+        dataProps.pageTransitionAnimationControl.mount()
+        .then(() => {
             setInTransition(true)
             router.push('/game/menu', '/game')
         })
@@ -93,27 +88,6 @@ export default function GameIndex({ dataProps }) {
             }
         })
     }, [])
-
-    function calculateFps() {
-        var lastLoop:any = new Date();
-        let currentFps = '0'
-        function gameLoop() { 
-            var thisLoop:any = new Date();
-            var fps = (1000 / (thisLoop - lastLoop)).toFixed(0);
-
-            lastLoop = thisLoop;
-            currentFps = (fps)
-
-            requestAnimationFrame(() => {
-                gameLoop()
-            })
-        }
-        gameLoop()
-
-        setInterval(() => {
-            setCurrentFinalFps(currentFps)
-        }, 350)
-    }
 
     function setWelcomeScreen() {
         setWelcomeSplashVisible(false)
@@ -181,7 +155,7 @@ export default function GameIndex({ dataProps }) {
                 reject(false)
                 return
             }
-            await lowLag.loadAudio('welcomeMusic', { src: '/assets/introDump.mp3' })
+            await lowLag.loadAudio('welcomeMusic', { src: '/assets/introDemo.mp3' })
             resolve(true)
         })
     }
@@ -219,10 +193,26 @@ export default function GameIndex({ dataProps }) {
         loadRemainingAudios()
         setRemainingAudiosLoaded(true)
     }, [userData, user])
+
+    function setInfoBar(title, description, duration = 5000) {
+        setInfoBarTitle(title)
+        setInfoBarDescription(description)
+        infoBarAnimationControl.start({
+            opacity: 1
+        })
+        setInterval(() => {
+            infoBarAnimationControl.start({
+                opacity: 0
+            })
+        }, duration)
+    }
     
     async function startAllAudios() {
         let currentindex = 0
         const welcmusic = lowLag.playAudio('welcomeMusic', {})
+        setTimeout(() => {
+            setInfoBar('Hey there Aprilbeat Player!', 'Welcome to aprilbeat <3')
+        }, 5000);
 
         function relayNextAudio(audio) {
             audio?.source.addEventListener('ended', async () => {
@@ -235,6 +225,8 @@ export default function GameIndex({ dataProps }) {
                 // await lowLag.loadAudio(songid, { src: songData.signedURL })
                 const newaudio = lowLag.playAudio(songid, {})
                 setCurrentBackgroundSong(songData.songData)
+                setInfoBar(songData.songData.title, songData.songData.artist.join(', '))
+
                 relayNextAudio(newaudio)
                 currentindex++
             })
@@ -264,8 +256,10 @@ export default function GameIndex({ dataProps }) {
     }
     
 
+    // Main Starting Script
     useEffect(() => {
         if (!router.isReady || startSequenceRan) return
+        console.log(inTransition)
 
         // Router Prefetches
         router.prefetch('/game/menu')
@@ -275,6 +269,7 @@ export default function GameIndex({ dataProps }) {
         if (inTransition == true) {
                 setIsLoaded(true)
                 setWelcomeScreen()
+                setInTransition(false)
                 return
         }
 
@@ -282,11 +277,12 @@ export default function GameIndex({ dataProps }) {
         loadNeededAudios().then(() => {
             setIsLoaded(true)
         })
-        calculateFps()
     }, [router.isReady, userData, user])
 
     return (
         <div style={{ backgroundRepeat: 'no-repeat', background: 'linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url(/assets/background.png)' }} className={`w-full h-full min-h-screen flex bg-black flex-col bg-cover bg-center text-white`}>
+
+            <InfoBar animation={infoBarAnimationControl} title={infoBarTitle} description={infoBarDescription} />
 
             <div className={`w-full ${isLoaded ? 'hidden' : ''} absolute z-10 h-full min-h-screen flex justify-center items-center`}>
                 <h1 className={`px-3 py-2 text-white`}>loading aprilbeat...</h1>
@@ -367,16 +363,7 @@ export default function GameIndex({ dataProps }) {
                 </div>
             </motion.div> 
 
-
-            <div id="footer" className={`fixed text-sm md:text-[9px] opacity-70 bottom-0 mb-1 md:mb-0 space-x-1 flex pl-2 w-full`}>
-                <h1 className={`font-medium`}>aprilbeat</h1>
-                {/* <svg className="react-flow__background react-flow__container w-full h-full"><pattern id="pattern-95073" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="var(--gray-200)"></circle></pattern><rect x="0" y="0" width="100%" height="100%" fill="url(#pattern-95073)"></rect></svg> */}
-                <h1>2021.913.0</h1>
-
-                <div>
-                    <h1>{currentFinalFps}fps</h1>
-                </div>
-            </div>
+            <BottomBar />
         </div>
     )
 }
