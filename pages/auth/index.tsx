@@ -3,9 +3,10 @@ import { useEffect, useState } from "react"
 import Dialog from "@/components/DialogComponent"
 import { useRouter } from "next/router"
 import * as api from "@/clients/apiPublic"
+import { AppDataProps } from "@/constants/customTypings/app"
 
 
-export default function AuthIndex(props) {
+export default function AuthIndex({ dataProps }) {
 
     const [isVerifyEmailShown, setIsVerifyEmailShown] = useState(false)
     const [signInWithEmailShown, setSignInWithEmailShown] = useState(false)
@@ -15,18 +16,27 @@ export default function AuthIndex(props) {
     const [dialogDescription, setDialogDescription] = useState('')
     const [dialogDismissable, setDialogDismissable] = useState(true)
 
+    const { state: inTransition, stateSetter: setInTransition } =
+        dataProps.inTransition;
+
     const router = useRouter()
 
     useEffect(() => {
         const auth = supabase.auth
 
+        function pushMeBackToGame() {
+            setInTransition(true)
+            // router.push('/game')
+            window.location.href = '/game'
+        }
+
         if (auth.user() && router.isReady) {
-            router.replace('/game')
+            pushMeBackToGame()
         }
 
         auth.onAuthStateChange(() => {
             if (auth.user() && router.isReady) {
-                router.replace('/game')
+                pushMeBackToGame()
             }
         })
     }, [router.isReady])
@@ -60,7 +70,6 @@ export default function AuthIndex(props) {
             setIsDialogShown(true)
             return
         }
-        router.push('/game')
     }
 
     async function signUpWithEmail() {

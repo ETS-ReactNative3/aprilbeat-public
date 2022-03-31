@@ -42,7 +42,7 @@ export default function Menu({ dataProps }) {
 
     return (
         <div className={`bg-[#F0F2F3] dark:bg-[#202020] pb-12`}>
-            <Topbar animationControl={topBarAnimationControl} userData={user} />
+            <Topbar animationControl={topBarAnimationControl} userData={user} inTransitionSetter={setInTransition} />
 
             <motion.div
                 className={`w-full flex min-h-screen h-full`}

@@ -24,7 +24,7 @@ const awaitingforload: string[] = [];
 const audioincache: any = {};
 export async function loadAudio(id, { src }): Promise<boolean> {
   return new Promise(async (resolve, reject) => {
-    if (!id) reject(false);
+    if (!id || !src) reject(false);
     if (!initialized) {
       logIt(
         `Failed to play audio because audio engine has not been initialized`,
