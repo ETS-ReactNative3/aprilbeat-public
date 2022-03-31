@@ -3,7 +3,8 @@ import { logIt } from "@/clients/index";
 
 let windowobject;
 let initialized = false;
-export function init(window) {
+export function init(window):boolean {
+  if (!window) return false;
   windowobject = window;
   const lowLag = windowobject.lowLag;
   lowLag.init();
@@ -23,6 +24,7 @@ const awaitingforload: string[] = [];
 const audioincache: any = {};
 export async function loadAudio(id, { src }): Promise<boolean> {
   return new Promise(async (resolve, reject) => {
+    if (!id) reject(false);
     if (!initialized) {
       logIt(
         `Failed to play audio because audio engine has not been initialized`,
@@ -89,6 +91,7 @@ const allplayedaudios: AudioData[] = [];
 const currentlyplayingaudios: AudioData[] = [];
 
 export function playAudio(id, { retryAfter = true }): AudioData | null {
+  if (!id) return null;
   const lowLag = windowobject.lowLag;
   if (!audioincache[id]) {
     logIt(
@@ -205,6 +208,7 @@ export function getContext(): AudioContext {
 }
 
 export function getAudio(id): AudioData | null {
+  if (!id) return null
   const selectedinarray = currentlyplayingaudios.find(
     (audio) => audio.id == id
   );
@@ -214,6 +218,7 @@ export function getAudio(id): AudioData | null {
 }
 
 export function stopAudio(id): boolean {
+  if (!id) return false;
   const selectedinarray = currentlyplayingaudios.find(
     (audio) => audio.id == id
   );
