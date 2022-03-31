@@ -247,7 +247,6 @@ export default function GameIndex({ dataProps }) {
                 lowLag?.setGlobalVolume(lowLag.getGlobalVolume() - 0.1, {})
             }
             if (event.code == 'Equal') {
-                window.ll = lowLag
                 lowLag?.setGlobalVolume(lowLag.getGlobalVolume() + 0.1, {})
             }
         })
