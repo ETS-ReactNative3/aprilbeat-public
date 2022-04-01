@@ -9,6 +9,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { beatmapid } = req.query;
+  console.log(req.query);
   const thebeatmap = await prismaClient.beatmaps.findFirst({
     where: {
       id: beatmapid.toString(),
@@ -30,9 +31,13 @@ export default async function handler(
   const signedAudioUrl = await supabase.storage
     .from("songs")
     .createSignedUrl(thesong.filename as string, 600);
+    const signedImageUrl = await supabase.storage
+      .from("images")
+      .createSignedUrl(thebeatmap.imageid as string, 600);
 
     const finaldata = Object.assign(thebeatmap, {
       signedURL: signedAudioUrl.signedURL,
+      signedImageUrl: signedImageUrl.signedURL,
     });
 
     resolveHandler(res, {

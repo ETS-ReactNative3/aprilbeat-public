@@ -12,6 +12,7 @@ model Beatmaps {
   created_at DateTime? @default(now()) @db.Timestamptz(6)
   beatmapid  String?   @unique
   songid     String?   @db.Uuid
+  imageid    String?
   Songs      Songs?    @relation(fields: [songid], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 

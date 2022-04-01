@@ -223,6 +223,21 @@ export const fetchAudioLink = async (songid): Promise<AudioLink> => {
   });
 };
 
+interface ImageLink {
+  signedURL: string;
+}
+export const fetchImageLink = async (imageid): Promise<ImageLink> => {
+  return new Promise(async (res, rej) => {
+    const dt = await apifetch(`/storage/bucket/images/${imageid}/objectlink`, {
+      method: "GET",
+    }).catch((err) => {
+      rej(err);
+      return;
+    });
+    res(dt);
+  });
+};
+
 
 export const fetchBeatmap = async (beatmapid): Promise<Beatmaps> => {
   return new Promise(async (res, rej) => {
