@@ -1,7 +1,7 @@
 import { serveraddress } from "@/constants/development";
 import { supabase } from "@/clients/supabasePublic";
 import querystring from "querystring";
-import type { Users, Songs } from "@prisma/client";
+import type { Users, Songs, Beatmaps } from "@prisma/client";
 import { logIt } from ".";
 
 async function apifetch(
@@ -214,6 +214,34 @@ interface AudioLink {
 export const fetchAudioLink = async (songid): Promise<AudioLink> => {
   return new Promise(async (res, rej) => {
     const dt = await apifetch(`/storage/bucket/songs/${songid}/objectlink`, {
+      method: "GET",
+    }).catch((err) => {
+      rej(err);
+      return;
+    });
+    res(dt);
+  });
+};
+
+interface ImageLink {
+  signedURL: string;
+}
+export const fetchImageLink = async (imageid): Promise<ImageLink> => {
+  return new Promise(async (res, rej) => {
+    const dt = await apifetch(`/storage/bucket/images/${imageid}/objectlink`, {
+      method: "GET",
+    }).catch((err) => {
+      rej(err);
+      return;
+    });
+    res(dt);
+  });
+};
+
+
+export const fetchBeatmap = async (beatmapid): Promise<Beatmaps> => {
+  return new Promise(async (res, rej) => {
+    const dt = await apifetch(`/beatmaps/${beatmapid}/data`, {
       method: "GET",
     }).catch((err) => {
       rej(err);

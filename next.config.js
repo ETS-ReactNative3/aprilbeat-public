@@ -2,8 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    runtime: 'next',
+    runtime: "edge",
+    serverComponents: true,
   },
-}
+};
 
 module.exports = nextConfig
