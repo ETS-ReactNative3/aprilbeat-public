@@ -79,6 +79,7 @@ interface AudioData {
   id: string;
   source: AudioBufferSourceNode;
   audioContext: AudioContext;
+  audioBuffer: AudioBuffer;
   gainNode: GainNode;
   sm: {
     fadeIn: Function;
@@ -113,7 +114,7 @@ export function playAudio(id, { retryAfter = true }): AudioData | null {
     source: "audioEngine_playAudio",
     raw: { id, audiocache: audioincache },
   });
-  const { source, audioContext, gainNode }: AudioData = lowLag.play(id);
+  const { source, audioContext, gainNode, audioBuffer }: AudioData = lowLag.play(id);
   logIt(`Playing audio with id "${id}"`, {
     source: "audioEngine_playAudio",
     raw: { id, audiocache: audioincache },
@@ -133,6 +134,7 @@ export function playAudio(id, { retryAfter = true }): AudioData | null {
     id: id,
     source,
     audioContext,
+    audioBuffer,
     gainNode,
     sm: {
       fadeIn: (volume) => {

@@ -289,6 +289,7 @@ var lowLag = new (function () {
       source: source,
       audioContext: context,
       gainNode: gainNode,
+      audioBuffer: buffer,
     };
     console.log(data);
     return data;

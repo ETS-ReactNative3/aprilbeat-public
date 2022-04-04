@@ -19,6 +19,9 @@ export default function Play({ dataProps }) {
     const [loadingIsVisible, setLoadingIsVisible] = useState<boolean>(false)
     const [gameBoardVisible, setGameBoardVisible] = useState<boolean>(false)
 
+    // Parsing Datas
+    const [gameboardTexts, setGameboardTexts] = useState<Array<object>>([])
+
     // Animation Controls
     const backgroundAnimationControl = useAnimation()
     const loadingScreenAnimationControl = useAnimation()
@@ -31,31 +34,38 @@ export default function Play({ dataProps }) {
 
     const data = {
         1000: {
+            game: {
+                clickies: [
+                    {
+                        lane: 1,
+                        multiplier: 1,
+                    }
+                ]
+            },
             motion: {
                 gameboardGridAnimationControl: {
-                    positionFromBottom: -80
+                    positionFromBottom: 80
                 }
             }
         },
         1900: {
             motion: {
                 gameboardGridAnimationControl: {
-                    positionFromBottom: -20
+                    positionFromBottom: 20
                 }
-            }
+            },
         },
         2800: {
             motion: {
                 gameboardGridAnimationControl: {
-                    positionFromBottom: -100
+                    positionFromBottom: 100
                 }
-            }
+            },
         },
         3800: {
             motion: {
                 gameboardGridAnimationControl: {
-                    positionFromBottom: -20,
-                    ease: "easeInOut"
+                    positionFromBottom: 20
                 }
             }
         },
@@ -63,17 +73,12 @@ export default function Play({ dataProps }) {
     const motionmappings = {
         positionFromBottom: {
             transform: (thevalue) => {
-                const val = 'translate(50%, {{ .value }}%)'.replace('{{ .value }}', thevalue)
+                const val = `translate(50%, ${-Math.abs(thevalue)}%)`
                 return val
             },
-            // opacity: (thevalue) => {
-            //     return 0.5
-            // }
         },
         ease: {
             transition: (easetype) => {
-                console.log(easetype)
-
                 const val = { ease: easetype }
                 return val
             }
@@ -87,11 +92,44 @@ export default function Play({ dataProps }) {
         async function prepareGame() {
             return new Promise((resolve, reject) => {
 
+                let totalclickies: object[] = []
                 Object.keys(data).forEach((timeouttime) => {
                     const actualdata = data[timeouttime]
-                    const motion = actualdata?.motion
+                    const { motion, game } = actualdata
+
+                    // Game Parsing
+                    if (game) {
+                        const clickies = game?.clickies
+                        if (!clickies) return
+                        clickies.forEach((clickie) => {
+                            const { lane, multiplier } = clickie
+                            const text = {
+                                area: Number(lane),
+                                multiplier: Number(multiplier),
+                            }
+                            totalclickies.push(text)
+
+                            setTimeout(() => {
+                                console.log(text)
+                            }, Number(timeouttime));
+                        })
+                    }
+                    console.log(totalclickies)
+
+                    // Text parsing
+                    // if (text) {
+                    //     console.log(text)
+                    //     Object.keys(text).forEach((textmodifyaction: any) => {
+                    //         const value = text[textmodifyaction]
+                            
+                    //         // textdata = { text: "I'm not letting you go." }
+                    //         console.log(value)
+                    //         finaltexts.push(value)
+                    //     })
+                    // }
 
                     setTimeout(() => {
+                        // Motion parsing
                         if (motion) {
                             Object.keys(motion).forEach((key) => {
                                 var motionkeyvalue = key
@@ -122,6 +160,7 @@ export default function Play({ dataProps }) {
                     }, Number(timeouttime));
 
                 })
+                // setGameboardTexts(finaltexts)
 
                 resolve(true)
             })
@@ -132,9 +171,7 @@ export default function Play({ dataProps }) {
         }
 
         (async () => {
-            console.log('abcddd')
-
-            // Initialize the game
+             // Initialize the game
             lowLag.init(window)
 
             // Fetch beatmap and save to state
@@ -178,7 +215,7 @@ export default function Play({ dataProps }) {
                         await prepareGame()
 
                         // Start the game
-                        lowLag.playAudio(`audio_${beatmap.beatmapid}`, {})
+                        const mainaudio = lowLag.playAudio(`audio_${beatmap.beatmapid}`, {})
                         startGame()
                     })
                 })
@@ -245,6 +282,23 @@ export default function Play({ dataProps }) {
                             </div>
                         </div>
                     </div>
+                </motion.div>
+
+                <motion.div className={`absolute h-full w-full text-white`}>
+                    {(() => {
+                        return gameboardTexts.map((textdata:any) => {
+                            return (
+                                <motion.h1
+                                key={`gameboard_texts_${textdata.id}`}
+                                transition={{ ease: 'easeOut' }}
+                                className={`absolute`}
+                                initial={{ transform: 'translate(50%, -50%)', top: '50%', right: '50%' }}
+                                >
+                                    {textdata.text}
+                                </motion.h1>
+                            )
+                        })
+                    })()}
                 </motion.div>
             </div>
 

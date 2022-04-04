@@ -1,4 +1,4 @@
-import { serveraddress } from "@/constants/development";
+import { serverAddress } from "@/constants/development";
 import { supabase } from "@/clients/supabasePublic";
 import querystring from "querystring";
 import type { Users, Songs, Beatmaps } from "@prisma/client";
@@ -40,7 +40,7 @@ async function apifetch(
     });
 
     await fetch(
-      `${serveraddress}/api${path}?accessToken=${authTokenFetch}${
+      `${serverAddress}/api${path}?accessToken=${authTokenFetch}${
         finalparams ? `&${finalparams}` : ""
       }`,
       finaloptions

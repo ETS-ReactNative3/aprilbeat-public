@@ -2,7 +2,7 @@
 import { rejectHandler, resolveHandler } from "@/clients/api";
 import { prismaClient } from "@/clients/prisma";
 import { supabase } from "@/clients/supabase";
-import { serveraddress } from "@/constants/development";
+import { serverAddress } from "@/constants/development";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -43,7 +43,7 @@ export default async function handler(
       password: password,
     },
     {
-      redirectTo: `${serveraddress}/auth/action?from=apisignup`,
+      redirectTo: `${serverAddress}/auth/action?from=apisignup`,
     }
   );
 

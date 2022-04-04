@@ -13,6 +13,7 @@ import ErrorCatcher from '@/components/ErrorCatcher'
 
 function MyApp({ Component, pageProps }) {
 
+  // Initialize app error boundary
   const {
     ErrorBoundary,
     didCatch,
@@ -20,6 +21,23 @@ function MyApp({ Component, pageProps }) {
     reset
   } = useErrorBoundary()
 
+  // Install service worker
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("/sw.js").then(
+          function (registration) {
+            console.log("Service Worker registration successful with scope: ", registration.scope);
+          },
+          function (err) {
+            console.log("Service Worker registration failed: ", err);
+          }
+        );
+      });
+    }
+  }, [])
+
+  // States and Animation Controls
   const pageTransitionAnimationControl = useAnimation()
   const [inTransition, setInTransition] = useState(false)
   const [audioLoaded, setAudioLoaded] = useState(false)
@@ -27,6 +45,7 @@ function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState <AuthUser>()
   const [userData, setUserData] = useState<Users>()
 
+  // Dataprops to be passed to page component
   const dataProps: AppDataProps = {
     pageTransitionAnimationControl: {
       mount: async() => {
@@ -101,6 +120,10 @@ function MyApp({ Component, pageProps }) {
       <ErrorBoundary>
         <Head>
           <title>Aprilbeat</title>
+
+          <meta name="viewport" content="user-scalable=no, width=device-width, height=device-height" />
+          <meta name="mobile-web-app-capable" content="yes" />
+
           <meta name="title" content="Aprilbeat" />
           <meta name="description" content="rythm game shouldn't be limited. Now publicly available, running fully on web." />
         </Head>

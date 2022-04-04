@@ -1,0 +1,24 @@
+{
+  "author": "boneapriltea",
+  "background_color": "#ffffff",
+  "description": "Aprilbeat, rythm game shouldn't be limited anymore.",
+  "display": "standalone",
+
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "256x256",
+      "type": "image/ico"
+    }
+  ],
+
+  "lang": "en",
+  "manifest_version": 2,
+  "name": "Aprilbeat Rythm Game",
+  "orientation": "portrait",
+  "scope": "/",
+  "short_name": "Aprilbeat",
+  "start_url": "/game/preflight",
+  "theme_color": "#ffffff",
+  "version": "0.2"
+}
